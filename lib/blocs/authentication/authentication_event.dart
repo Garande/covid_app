@@ -23,7 +23,7 @@ class ClickedGooglSignIn extends AuthenticationEvent {
 
 class GoogleUserLoggedIn extends AuthenticationEvent {
   // final String token;
-  final FirebaseUser user;
+  final User user;
   GoogleUserLoggedIn(this.user);
   @override
   String toString() => 'GoogleUserLoggedIn';
@@ -36,7 +36,7 @@ class SendOtpEvent extends AuthenticationEvent {
   final String phoneNumber;
   final String countryCode;
   final String userId;
-  final FirebaseUser googleUser;
+  final User googleUser;
 
   SendOtpEvent(
       {this.countryCode, this.userId, this.phoneNumber, this.googleUser});
@@ -54,7 +54,7 @@ class VerifyOtpEvent extends AuthenticationEvent {
   final String phoneNumber;
   final String countryCode;
   final String userId;
-  final FirebaseUser googleUser;
+  final User googleUser;
 
   VerifyOtpEvent(
       {this.phoneNumber,
@@ -72,8 +72,8 @@ class OtpSendEvent extends AuthenticationEvent {
 }
 
 class LoggedIn extends AuthenticationEvent {
-  final FirebaseUser user;
-  final FirebaseUser googleUser;
+  final User user;
+  final User googleUser;
   final String phoneNumber;
   final String countryCode;
   final String userId;
@@ -99,7 +99,7 @@ class PickedProfilePicture extends AuthenticationEvent {
 
 class SaveUserProfile extends AuthenticationEvent {
   final File profileImage;
-  final UserObject user;
+  final AppUser user;
   SaveUserProfile(this.profileImage, this.user);
   @override
   String toString() => 'SaveUserProfile';

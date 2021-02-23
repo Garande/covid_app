@@ -22,7 +22,7 @@ class AuthInProgress extends AuthenticationState {
 }
 
 class GoogleAuthenticated extends AuthenticationState {
-  final FirebaseUser user;
+  final User user;
   GoogleAuthenticated(this.user);
   @override
   String toString() => 'GoogleAuthenticated';
@@ -62,7 +62,7 @@ class OtpExceptionState extends AuthenticationState {
 }
 
 class Authenticated extends AuthenticationState {
-  final FirebaseUser user;
+  final User user;
   Authenticated(this.user);
   @override
   String toString() => 'Authenticated';
@@ -72,7 +72,7 @@ class Authenticated extends AuthenticationState {
 }
 
 class PreFillData extends AuthenticationState {
-  final UserObject user;
+  final AppUser user;
   PreFillData(this.user);
   @override
   String toString() => 'PreFillData';

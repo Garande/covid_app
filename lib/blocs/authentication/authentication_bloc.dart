@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/repositories/authenticationRepository.dart';
+import 'package:covid_app/repositories/storageRepository.dart';
+import 'package:covid_app/repositories/userRepository.dart';
+import 'package:covid_app/utils/Paths.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kopesha/models/userObject.dart';
-import 'package:kopesha/repositories/authenticationRepository.dart';
-import 'package:kopesha/repositories/storageRepository.dart';
-import 'package:kopesha/repositories/userRepository.dart';
-import 'package:kopesha/utils/Paths.dart';
 import 'package:meta/meta.dart';
 
 part 'authentication_event.dart';
@@ -114,12 +114,11 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapClickedGoogleSignInToState() async* {
     yield AuthInProgress();
     try {
-      FirebaseUser authenticatedUser =
-          await authenticationRepository.getCurrentUser();
+      User authenticatedUser = authenticationRepository.getCurrentUser();
       if (authenticatedUser != null) {
         yield GoogleAuthenticated(authenticatedUser);
       } else {
-        FirebaseUser firebaseUser = await authenticationRepository
+        User firebaseUser = await authenticationRepository
             .signInWithGoogle()
             .catchError((onError) async* {
           yield AuthExceptionState(message: 'Google Login failed');
@@ -152,20 +151,16 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationEvent> sendOtp(String phoneNumber, String countryCode,
-      String userId, FirebaseUser googleUser) async* {
+      String userId, User googleUser) async* {
     StreamController<AuthenticationEvent> eventStream = StreamController();
     final phoneVerificationCompleted = (AuthCredential authCredential) {
-      authenticationRepository.getCurrentUser();
-      authenticationRepository.getCurrentUser().then((user) {
-        eventStream
-            .add(LoggedIn(user, googleUser, phoneNumber, countryCode, userId));
-        eventStream.close();
-      }).catchError((onError) {
-        print(onError);
-      });
+      User user = authenticationRepository.getCurrentUser();
+      eventStream
+          .add(LoggedIn(user, googleUser, phoneNumber, countryCode, userId));
+      eventStream.close();
     };
 
-    final phoneVerificationFailed = (AuthException authException) {
+    final phoneVerificationFailed = (FirebaseAuthException authException) {
       print(authException.message);
       eventStream.add(AuthExceptionEvent(authException.toString()));
       eventStream.close();
@@ -197,11 +192,11 @@ class AuthenticationBloc
       String phoneNumber,
       String countryCode,
       String userId,
-      FirebaseUser googleUser) async* {
+      User googleUser) async* {
     yield AuthInProgress();
     print(otp);
     try {
-      AuthResult result =
+      UserCredential result =
           await authenticationRepository.verifyPhoneNumber(verificationId, otp);
 
       if (result.user != null) {
@@ -229,13 +224,13 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> mapLoggedInToState(
-      FirebaseUser firebaseUser,
-      FirebaseUser googleUser,
+      User firebaseUser,
+      User googleUser,
       String phoneNumber,
       String countryCode,
       String userId) async* {
     yield ProfileUpdateInProgress();
-    UserObject user = await userDataRepository.saveDetailsFromGoogleAuth(
+    AppUser user = await userDataRepository.saveDetailsFromGoogleAuth(
         firebaseUser,
         googleUser,
         phoneNumber,
@@ -245,7 +240,7 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> mapGoogleUserLoggedIn() async* {
-    FirebaseUser firebaseUser = await authenticationRepository.getCurrentUser();
+    User firebaseUser = authenticationRepository.getCurrentUser();
     if (firebaseUser != null) {
       yield GoogleAuthenticated(firebaseUser);
     } else {
@@ -254,7 +249,7 @@ class AuthenticationBloc
   }
 
   Stream<AuthenticationState> mapSaveUserProfileToState(
-      File profileImage, UserObject user) async* {
+      File profileImage, AppUser user) async* {
     yield ProfileUpdateInProgress();
     if (profileImage != null) {
       String photoUrl = await storageRepository.uploadImage(
@@ -271,17 +266,17 @@ class AuthenticationBloc
     authenticationRepository.signOutUser();
   }
 
-  Future<UserObject> getCurrentUser() async {
-    FirebaseUser firebaseUser = await authenticationRepository.getCurrentUser();
+  Future<AppUser> getCurrentUser() async {
+    User firebaseUser = await authenticationRepository.getCurrentUser();
     if (firebaseUser != null) {
-      UserObject user =
+      AppUser user =
           await userDataRepository.getUserByLoginId(firebaseUser.uid);
       return user;
     }
     return null;
   }
 
-  Future<UserObject> getUserByUserId(String userId) {
+  Future<AppUser> getUserByUserId(String userId) {
     return userDataRepository.getUserByUserId(userId);
   }
 

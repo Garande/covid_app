@@ -15,7 +15,7 @@ class Button extends StatelessWidget {
 
   const Button({
     Key key,
-    this.height = 38.0,
+    this.height = 40.0,
     this.width = double.infinity,
     this.text,
     this.shadowColor,
@@ -36,21 +36,18 @@ class Button extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-          // gradient: gradient != null
-          //     ? gradient
-          //     : LinearGradient(colors: [
-          //         AppTheme.lightGreen,
-          //         HexColor('#DCE775'),
-          //       ], begin: Alignment.topLeft, end: Alignment.bottomRight),
-          borderRadius: borderRadius,
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: shadowColor != null
-                    ? shadowColor
-                    : Colors.green.withOpacity(0.4),
-                offset: const Offset(4.0, 4.0),
-                blurRadius: 4.0),
-          ],
+          gradient: new LinearGradient(
+              colors: [
+                AppTheme.getPrimaryColor(),
+                AppTheme.getPrimaryDarkColor(),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp),
+          borderRadius: BorderRadius.all(
+            Radius.circular(5.0),
+          ),
         ),
         child: Material(
           color: AppTheme.getPrimaryColor(),

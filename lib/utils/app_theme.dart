@@ -33,7 +33,7 @@ class AppTheme {
   static const instaLtYellow = Color.fromRGBO(255, 220, 128, 1);
 
   static const Color darkText = Color.fromRGBO(0, 0, 0, 0.87);
-  static const Color darkerText = Color(0xFF17262A);
+  static const Color darkerText = Color(0xff0C233C); // Color(0xFF17262A);
   static const Color lightText = Color.fromRGBO(255, 255, 255, 0.87);
   static const Color deactivatedText = Color(0xFF767676);
   static const Color dismissibleBackground = Color(0xFF364A54);
@@ -66,20 +66,23 @@ class AppTheme {
   static const Color yellow = Color(0xFFF6C747);
   static const Color violet = Color(0xD07038F8);
 
+  static const Color primaryColor = const Color(0xFF8F94FB);
+  static const Color primaryColorDark = const Color(0xFF4E54C8);
+
   // static const String fontName = 'WorkSans';
-  static const String fontName = 'Spartan';
+  static const String fontName = 'NunitoSans';
 
   static const String fontHeaderName = 'MoonlightsOnTheBeach';
 
-  static const TextTheme textTheme = TextTheme(
-    display1: display1,
-    headline: headline,
-    title: title,
-    subtitle: subtitle,
-    body2: body2,
-    body1: body1,
-    caption: caption,
-  );
+  // static const TextTheme textTheme = TextTheme(
+  //   display1: display1,
+  //   headline: headline,
+  //   title: title,
+  //   subtitle: subtitle,
+  //   body2: body2,
+  //   body1: body1,
+  //   caption: caption,
+  // );
 
   static const TextStyle display1 = TextStyle(
     // h4 -> display1
@@ -100,13 +103,11 @@ class AppTheme {
     color: darkerText,
   );
 
-  static const TextStyle title = TextStyle(
-    // h6 -> title
+  static TextStyle title = TextStyle(
     fontFamily: fontName,
+    color: darkText,
+    fontSize: 30,
     fontWeight: FontWeight.bold,
-    fontSize: 16,
-    letterSpacing: 0.18,
-    color: darkerText,
   );
 
   static const TextStyle subtitle = TextStyle(
@@ -127,13 +128,18 @@ class AppTheme {
     color: darkText,
   );
 
-  static const TextStyle body1 = TextStyle(
-    // body2 -> body1
+  static const TextStyle body = TextStyle(
     fontFamily: fontName,
-    fontWeight: FontWeight.w400,
+    color: Color(0xff646464),
     fontSize: 16,
-    letterSpacing: -0.05,
-    color: darkText,
+  );
+
+  static TextStyle subTitleTextColored = TextStyle(
+    fontFamily: fontName,
+    color: primaryColor,
+    fontSize: 14,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
   );
 
   static const TextStyle caption = TextStyle(
@@ -144,4 +150,8 @@ class AppTheme {
     letterSpacing: 0.2,
     color: lightText, // was lightText
   );
+
+  static getPrimaryDarkColor() {
+    return primaryColorDark;
+  }
 }

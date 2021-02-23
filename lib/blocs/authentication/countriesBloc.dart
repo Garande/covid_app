@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:covid_app/models/country.dart';
+import 'package:covid_app/repositories/countriesRepository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:kopesha/models/country.dart';
-import 'package:kopesha/repositories/countriesRepository.dart';
 
 enum CountriesDataState { Ready, Searching }
 

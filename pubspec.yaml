@@ -40,6 +40,7 @@ dependencies:
   provider: ^4.3.3
   rxdart: ^0.25.0
   sqflite: ^1.3.2+3
+  intro_slider: ^2.3.4
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +54,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/getStartedImages/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -80,3 +84,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  fonts:
+    - family: NunitoSans
+      fonts:
+        - asset: assets/fonts/nunito_sans/NunitoSans-Black.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-BlackItalic.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-Bold.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-BoldItalic.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-ExtraBold.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-Light.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-Regular.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-SemiBold.ttf
+        - asset: assets/fonts/nunito_sans/NunitoSans-SemiBoldItalic.ttf
