@@ -1,4 +1,4 @@
-import 'package:kopesha/database/database.dart';
+import 'package:covid_app/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBHelper {

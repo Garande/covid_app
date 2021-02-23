@@ -1,10 +1,10 @@
-import 'package:kopesha/database/dao/dao.dart';
-import 'package:kopesha/database/dao/dbHelper.dart';
-import 'package:kopesha/database/database.dart';
-import 'package:kopesha/models/userObject.dart';
+import 'package:covid_app/database/dao/dao.dart';
+import 'package:covid_app/database/dao/dbHelper.dart';
+import 'package:covid_app/database/database.dart';
+import 'package:covid_app/models/appUser.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
-class UserDao extends BaseDao<UserObject> {
+class UserDao extends BaseDao<AppUser> {
   String _tableName = "users";
 
   String _userIdField = "userId";
@@ -64,8 +64,7 @@ class UserDao extends BaseDao<UserObject> {
   }
 
   @override
-  Future<List<UserObject>> fetchAll(
-      {List<String> columns, String query}) async {
+  Future<List<AppUser>> fetchAll({List<String> columns, String query}) async {
     final db = await databaseProvider.database;
 
     List<Map<String, dynamic>> result;
@@ -79,27 +78,27 @@ class UserDao extends BaseDao<UserObject> {
       result = await db.query(_tableName, columns: columns);
     }
 
-    List<UserObject> users = result.isNotEmpty
-        ? result.map((user) => UserObject.fromJson(user)).toList()
+    List<AppUser> users = result.isNotEmpty
+        ? result.map((user) => AppUser.fromJson(user)).toList()
         : [];
     return users;
   }
 
   @override
-  Future<UserObject> fetchSingle({String id, List<String> columns}) async {
+  Future<AppUser> fetchSingle({String id, List<String> columns}) async {
     final db = await databaseProvider.database;
 
     List<Map<String, dynamic>> result;
     result = await db.query(_tableName,
         columns: columns, where: '$_userIdField = ?', whereArgs: ["$id"]);
 
-    List<UserObject> users = result.isNotEmpty
-        ? result.map((user) => UserObject.fromJson(user)).toList()
+    List<AppUser> users = result.isNotEmpty
+        ? result.map((user) => AppUser.fromJson(user)).toList()
         : [];
     return users[0];
   }
 
-  Future<UserObject> fetchUserByLogInId(
+  Future<AppUser> fetchUserByLogInId(
       {String loginId, List<String> columns}) async {
     final db = await databaseProvider.database;
 
@@ -107,8 +106,8 @@ class UserDao extends BaseDao<UserObject> {
     result = await db.query(_tableName,
         columns: columns, where: '$_loginIdField = ?', whereArgs: ["$loginId"]);
 
-    List<UserObject> users = result.isNotEmpty
-        ? result.map((user) => UserObject.fromJson(user)).toList()
+    List<AppUser> users = result.isNotEmpty
+        ? result.map((user) => AppUser.fromJson(user)).toList()
         : [];
     if (users.length > 0) {
       return users[0];
@@ -117,7 +116,7 @@ class UserDao extends BaseDao<UserObject> {
   }
 
   @override
-  Future<int> insert(UserObject object) async {
+  Future<int> insert(AppUser object) async {
     final db = await databaseProvider.database;
     var result = db.insert(_tableName, object.toJson());
     return result;
@@ -139,7 +138,7 @@ class UserDao extends BaseDao<UserObject> {
   }
 
   @override
-  Future<int> update(UserObject object) async {
+  Future<int> update(AppUser object) async {
     final db = await databaseProvider.database;
 
     var result = await db.update(_tableName, object.toJson(),
@@ -162,7 +161,7 @@ class UserDao extends BaseDao<UserObject> {
   }
 
   @override
-  Future<int> saveToLocalDb(UserObject object) {
+  Future<int> saveToLocalDb(AppUser object) {
     return DBHelper.saveToLocalDb(
       id: object.userId,
       table: _tableName,

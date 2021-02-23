@@ -1,23 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:covid_app/database/dao/userDao.dart';
+import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/providers/provider.dart';
+import 'package:covid_app/utils/Paths.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kopesha/database/dao/userDao.dart';
-import 'package:kopesha/providers/provider.dart';
-import 'package:kopesha/utils/Paths.dart';
-import 'package:kopesha/models/userObject.dart';
 
 class UserDataProvider extends BaseUserDataProvider {
-  final firestoreDb = Firestore.instance;
+  final firestoreDb = FirebaseFirestore.instance;
   final userDao = UserDao();
 
   @override
-  Future<UserObject> saveDetailsFromGoogleAuth(
-      FirebaseUser user,
-      FirebaseUser googleUser,
-      String phoneNumber,
-      String countryCode,
-      String userId) async {
+  Future<AppUser> saveDetailsFromGoogleAuth(User user, User googleUser,
+      String phoneNumber, String countryCode, String userId) async {
     DocumentReference docReference =
-        firestoreDb.collection(Paths.usersPath).document(userId);
+        firestoreDb.collection(Paths.usersPath).doc(userId);
     final bool userExists = await docReference.snapshots().isEmpty;
     var data = {
       'loginId': user.uid,
@@ -28,30 +24,29 @@ class UserDataProvider extends BaseUserDataProvider {
       'countryCode': countryCode
     };
     if (!userExists) {
-      data['photoUrl'] = googleUser.photoUrl;
+      data['photoUrl'] = googleUser.photoURL;
     }
     return await updateUserDetails(userId, data);
   }
 
   @override
-  Future<UserObject> saveUserProfileDetails(UserObject user) async {
+  Future<AppUser> saveUserProfileDetails(AppUser user) async {
     return await updateUserDetails(user.userId, user.toJson());
   }
 
   @override
-  Future<UserObject> getUserByLogInId(String loginId) async {
+  Future<AppUser> getUserByLogInId(String loginId) async {
     return await userDao.fetchUserByLogInId(loginId: loginId);
   }
 
   @override
-  Future<UserObject> updateUserDetails(
+  Future<AppUser> updateUserDetails(
       String userId, Map<String, dynamic> userData) async {
     DocumentReference docReference =
-        firestoreDb.collection(Paths.usersPath).document(userId);
-
-    docReference.setData(userData);
+        firestoreDb.collection(Paths.usersPath).doc(userId);
+    docReference.set(userData, SetOptions(merge: true));
     final DocumentSnapshot currentDocument = await docReference.get();
-    UserObject userObject = UserObject.fromFirestore(currentDocument);
+    AppUser userObject = AppUser.fromFirestore(currentDocument);
     bool isSavedInLocalDb = await userDao.isExist(userId);
     if (isSavedInLocalDb) {
       await userDao.update(userObject);
@@ -62,9 +57,9 @@ class UserDataProvider extends BaseUserDataProvider {
   }
 
   @override
-  Future<UserObject> getUserByUserId(String userId) {
+  Future<AppUser> getUserByUserId(String userId) {
     return Paths.retrieveUserDbPath(userId)
         .get()
-        .then((doc) => UserObject.fromFirestore(doc));
+        .then((doc) => AppUser.fromFirestore(doc));
   }
 }

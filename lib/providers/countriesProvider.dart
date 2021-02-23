@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:covid_app/models/country.dart';
 import 'package:flutter/services.dart';
-import 'package:kopesha/models/country.dart';
 
 class CountriesProvider {
   Future<List<Country>> loadCountriesJson() async {

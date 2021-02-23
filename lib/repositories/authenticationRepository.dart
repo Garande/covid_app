@@ -1,17 +1,14 @@
+import 'package:covid_app/providers/authenticationProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kopesha/providers/authenticationProvider.dart';
-import 'package:kopesha/providers/provider.dart';
 
 class AuthenticationRepository {
-  BaseAuthenticationProvider authenticationProvider = AuthenticationProvider();
+  AuthenticationProvider authenticationProvider = AuthenticationProvider();
 
-  Future<FirebaseUser> signInWithGoogle() =>
-      authenticationProvider.signInWithGoogle();
+  Future<User> signInWithGoogle() => authenticationProvider.signInWithGoogle();
 
   Future<void> signOutUser() => authenticationProvider.signOutUser();
 
-  Future<FirebaseUser> getCurrentUser() =>
-      authenticationProvider.getCurrentUser();
+  User getCurrentUser() => authenticationProvider.getCurrentUser();
 
   Future<bool> isLoggedIn() => authenticationProvider.isLoggedIn();
 
@@ -29,6 +26,7 @@ class AuthenticationRepository {
           phoneVerificationCompleted,
           phoneCodeSent,
           autoRetrievalTimeout);
-  Future<AuthResult> verifyPhoneNumber(String verificationId, String smsCode) =>
+  Future<UserCredential> verifyPhoneNumber(
+          String verificationId, String smsCode) =>
       authenticationProvider.verifyPhoneNumber(verificationId, smsCode);
 }

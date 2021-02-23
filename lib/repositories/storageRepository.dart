@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:kopesha/providers/storageProvider.dart';
+import 'package:covid_app/providers/storageProvider.dart';
 
 class StorageRepository {
   StorageProvider storageProvider = StorageProvider();

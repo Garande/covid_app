@@ -1,16 +1,18 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:kopesha/providers/provider.dart';
+import 'package:covid_app/providers/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class StorageProvider extends BaseStorageProvider {
-  final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  final firebase_storage.FirebaseStorage firebaseStorage =
+      firebase_storage.FirebaseStorage.instance;
   @override
   Future<String> uploadImage(File file, String storagePath) async {
-    StorageReference reference = firebaseStorage.ref().child(storagePath);
-    StorageUploadTask uploadTask = reference.putFile(file);
-    StorageTaskSnapshot result =
-        await uploadTask.onComplete; //wait for upload to complete
+    firebase_storage.Reference reference =
+        firebaseStorage.ref().child(storagePath);
+    firebase_storage.UploadTask uploadTask = reference.putFile(file);
+    firebase_storage.TaskSnapshot result =
+        uploadTask.snapshot; //wait for upload to complete
     String url = await result.ref.getDownloadURL();
     return url;
   }

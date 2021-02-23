@@ -1,31 +1,27 @@
+import 'package:covid_app/database/dao/userDao.dart';
+import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/providers/provider.dart';
+import 'package:covid_app/providers/userDataProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kopesha/database/dao/userDao.dart';
-import 'package:kopesha/models/userObject.dart';
-import 'package:kopesha/providers/provider.dart';
-import 'package:kopesha/providers/userDataProvider.dart';
 
 class UserDataRepository {
   BaseUserDataProvider userDataProvider = UserDataProvider();
   final userDao = UserDao();
 
-  Future<UserObject> saveDetailsFromGoogleAuth(
-          FirebaseUser user,
-          FirebaseUser googleUser,
-          String phoneNumber,
-          String countryCode,
-          String userId) =>
+  Future<AppUser> saveDetailsFromGoogleAuth(User user, User googleUser,
+          String phoneNumber, String countryCode, String userId) =>
       userDataProvider.saveDetailsFromGoogleAuth(
           user, googleUser, phoneNumber, countryCode, userId);
 
-  Future<UserObject> saveUserProfileDetails(UserObject user) async {
+  Future<AppUser> saveUserProfileDetails(AppUser user) async {
     return await userDataProvider.saveUserProfileDetails(user);
   }
 
-  Future<UserObject> updateUserDetails(
+  Future<AppUser> updateUserDetails(
           String userId, Map<String, dynamic> userData) async =>
       await userDataProvider.updateUserDetails(userId, userData);
 
-  Future<bool> isUserProfileExist(String loginId /**FirebaseUser.uid */) =>
+  Future<bool> isUserProfileExist(String loginId /**User.uid */) =>
       userDao.isUserExistByLoginId(loginId);
 
   //handle local db operations
@@ -33,15 +29,15 @@ class UserDataRepository {
 
   Future getUserFromLocal({String id}) => userDao.fetchSingle(id: id);
 
-  Future saveUserToLocal(UserObject user) => userDao.insert(user);
+  Future saveUserToLocal(AppUser user) => userDao.insert(user);
 
-  Future updateUserInLocal(UserObject user) => userDao.update(user);
+  Future updateUserInLocal(AppUser user) => userDao.update(user);
 
   Future deleteUserInLocalById(String userId) => userDao.delete(userId);
 
-  Future<UserObject> getUserByLoginId(String uid) =>
+  Future<AppUser> getUserByLoginId(String uid) =>
       userDataProvider.getUserByLogInId(uid);
 
-  Future<UserObject> getUserByUserId(String userId) =>
+  Future<AppUser> getUserByUserId(String userId) =>
       userDataProvider.getUserByUserId(userId);
 }

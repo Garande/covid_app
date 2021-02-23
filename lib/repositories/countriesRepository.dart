@@ -1,5 +1,5 @@
-import 'package:kopesha/models/country.dart';
-import 'package:kopesha/providers/countriesProvider.dart';
+import 'package:covid_app/models/country.dart';
+import 'package:covid_app/providers/countriesProvider.dart';
 
 class CountriesRepository {
   final countriesProvider = CountriesProvider();

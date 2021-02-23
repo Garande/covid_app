@@ -1,14 +1,14 @@
+import 'package:covid_app/providers/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:kopesha/providers/provider.dart';
 
 class AuthenticationProvider extends BaseAuthenticationProvider {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   @override
-  Future<FirebaseUser> getCurrentUser() async {
-    return await firebaseAuth.currentUser();
+  User getCurrentUser() {
+    return firebaseAuth.currentUser;
   }
 
   @override
@@ -18,7 +18,7 @@ class AuthenticationProvider extends BaseAuthenticationProvider {
   }
 
   @override
-  Future<FirebaseUser> signInWithGoogle() async {
+  Future<User> signInWithGoogle() async {
     final GoogleSignInAccount account =
         await googleSignIn.signIn().catchError((onError) {
       print(onError);
@@ -27,11 +27,11 @@ class AuthenticationProvider extends BaseAuthenticationProvider {
     final GoogleSignInAuthentication authentication =
         await account.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: authentication.idToken,
         accessToken: authentication.accessToken);
     await firebaseAuth.signInWithCredential(credential);
-    return firebaseAuth.currentUser();
+    return firebaseAuth.currentUser;
   }
 
   @override
@@ -59,8 +59,9 @@ class AuthenticationProvider extends BaseAuthenticationProvider {
   }
 
   @override
-  Future<AuthResult> verifyPhoneNumber(String verificationId, String smsCode) {
-    AuthCredential authCredential = PhoneAuthProvider.getCredential(
+  Future<UserCredential> verifyPhoneNumber(
+      String verificationId, String smsCode) {
+    AuthCredential authCredential = PhoneAuthProvider.credential(
         verificationId: verificationId, smsCode: smsCode);
 
     return firebaseAuth.signInWithCredential(authCredential);
