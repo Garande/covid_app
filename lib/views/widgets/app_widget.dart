@@ -378,18 +378,22 @@ class AppWidgets {
           child: Text(' $text',
               style: TextStyle(color: color, fontSize: fontSize)));
 
-  TextFormField getCustomEditTextField(
-      {String hintValue = "",
-      TextEditingController controller,
-      EdgeInsetsGeometry contentPadding =
-          const EdgeInsets.symmetric(vertical: 5),
-      Widget prefixWidget,
-      Widget suffixWidget,
-      TextStyle style,
-      Function validator,
-      bool obscureValue = false,
-      int maxLines = 1,
-      TextInputType keyboardType}) {
+  TextFormField getCustomEditTextField({
+    String hintValue = "",
+    TextEditingController controller,
+    EdgeInsetsGeometry contentPadding = const EdgeInsets.symmetric(vertical: 5),
+    Widget prefixWidget,
+    Widget suffixWidget,
+    TextStyle style,
+    Function validator,
+    bool obscureValue = false,
+    int maxLines = 1,
+    TextInputType keyboardType,
+    Function(String value) onChanged,
+    TextAlign textAlign = TextAlign.left,
+    FocusNode focusNode,
+    bool autofocus = false,
+  }) {
     return TextFormField(
       maxLines: maxLines,
       keyboardType: keyboardType,
@@ -415,6 +419,10 @@ class AppWidgets {
       style: style,
       validator: validator,
       obscureText: obscureValue,
+      onChanged: onChanged,
+      textAlign: textAlign,
+      focusNode: focusNode,
+      autofocus: autofocus,
     );
   }
 }

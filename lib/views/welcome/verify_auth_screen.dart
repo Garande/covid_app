@@ -1,4 +1,6 @@
 import 'package:covid_app/utils/app_theme.dart';
+import 'package:covid_app/utils/helper.dart';
+import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
 import 'package:flutter/material.dart';
 
@@ -56,26 +58,224 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
   @override
   Widget build(BuildContext context) {
-    _height = MediaQuery.of(context).size.height;
-    _width = MediaQuery.of(context).size.width;
-    _fixedPadding = _height * 0.025;
-    return Scaffold(
-      backgroundColor: AppTheme.nearlyWhite,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: _getBody(),
-        ),
+    return SingleChildScrollView(
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height / 2.2,
+                decoration: BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: [
+                      AppTheme.getPrimaryColor(),
+                      AppTheme.getPrimaryDarkColor(),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomRight,
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+              ),
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 55.0, left: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                          onPressed: widget.navigateBack,
+                          alignment: Alignment.centerLeft,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // BEGIN:: LOGO SECTION
+                  // Padding(
+                  //   padding: EdgeInsets.only(top: 75.0),
+                  //   child: Image.asset(
+                  //     'assets/images/logo-light.png',
+                  //     height: 68,
+                  //   ),
+                  // ),
+                  // BEGIN CARD SECTION
+                  Container(
+                    padding: EdgeInsets.only(top: 60),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: <Widget>[
+                            Center(
+                              // padding: const EdgeInsets.symmetric(
+                              //   horizontal: 20,
+                              // ),
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 30.0),
+                                decoration: new BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      10.0,
+                                    ),
+                                  ),
+                                  boxShadow: AppTheme.boxShadow,
+                                  color: Colors.white,
+                                ),
+                                width: MediaQuery.of(context).size.width - 50,
+                                // height: 340.0,
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 20.0,
+                                    ),
+                                    Text(
+                                      'VERIFY PHONE',
+                                      style: AppTheme.displayTextBoldColoured,
+                                    ),
+                                    Container(
+                                      width: 110,
+                                      height: 2,
+                                      color: AppTheme.getPrimaryColor(),
+                                    ),
+                                    SizedBox(height: 25.0),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          RichText(
+                                            textAlign: TextAlign.left,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      'Please enter the verification code that was sent to ',
+                                                  style: TextStyle(
+                                                    color: AppTheme.darkText,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: '${widget.phoneNumber}',
+                                                  style: TextStyle(
+                                                    color: AppTheme
+                                                        .getPrimaryColor(),
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: <Widget>[
+                                              getField("1", focusNode1,
+                                                  textController1),
+                                              SizedBox(width: 5.0),
+                                              getField("2", focusNode2,
+                                                  textController2),
+                                              SizedBox(width: 5.0),
+                                              getField("3", focusNode3,
+                                                  textController3),
+                                              SizedBox(width: 5.0),
+                                              getField("4", focusNode4,
+                                                  textController4),
+                                              SizedBox(width: 5.0),
+                                              getField("5", focusNode5,
+                                                  textController5),
+                                              SizedBox(width: 5.0),
+                                              getField("6", focusNode6,
+                                                  textController6),
+                                              SizedBox(width: 5.0),
+                                            ],
+                                          ),
+                                          SizedBox(height: 20.0),
+                                          FlatButton(
+                                            onPressed: widget.resendOtp,
+                                            child: Text(
+                                              'Resend',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: AppTheme.fontName,
+                                                fontWeight: FontWeight.w800,
+                                                color:
+                                                    AppTheme.getPrimaryColor(),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 20.0),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                String pin = textController1.text.trim() +
+                                    textController2.text.trim() +
+                                    textController3.text.trim() +
+                                    textController4.text.trim() +
+                                    textController5.text.trim() +
+                                    textController6.text.trim();
+                                widget.verifyOtp(pin);
+                              },
+                              child:
+                                  signupSubmitButton(iconPath: 'login_submit'),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              )
+            ],
+          )
+        ],
       ),
     );
   }
 
-  // _width * 8 / 10
-
-  Widget _getBody() => Container(
-        height: _height * 8 / 10,
-        width: MediaQuery.of(context).size.width,
-        child: _getColumnBody(),
-      );
+  Widget signupSubmitButton({String iconPath}) {
+    return Container(
+      decoration: new BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+        boxShadow: AppTheme.iconBoxShadow,
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Image.asset(
+          'assets/images/getStartedImages/${iconPath}.png',
+          width: 45,
+          height: 45,
+        ),
+      ),
+    );
+  }
 
   Widget _getColumnBody() => Column(
         // mainAxisSize: MainAxisSize.max,
@@ -106,12 +306,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
               ),
             ],
           ),
-          // SizedBox(height: 10,),
-          // Padding(
-          //   padding: EdgeInsets.all(_fixedPadding),
-          //   child: AppWidgets.getLogo(
-          //       logoPath: widget.logoPath, height: _height * 0.12),
-          // ),
 
           // AppName:
           SizedBox(height: 20.0),
@@ -218,59 +412,44 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
   Widget getField(String key, FocusNode fn, TextEditingController controller) =>
       Expanded(
-        // height: 40.0,
-        // width: 35.0,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.green[50],
-            borderRadius: BorderRadius.circular(7),
-          ),
-          child: TextField(
-            key: Key(key),
-            controller: controller,
-            expands: false,
-            autofocus: key.contains("1") ? true : false,
-            focusNode: fn,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorMaxLines: 1,
-              // hintText: hintText,
-            ),
-            onChanged: (String value) {
-              if (value.length == 1) {
-                code += value;
-                switch (code.length) {
-                  case 1:
-                    FocusScope.of(context).requestFocus(focusNode2);
-                    break;
-                  case 2:
-                    FocusScope.of(context).requestFocus(focusNode3);
-                    break;
-                  case 3:
-                    FocusScope.of(context).requestFocus(focusNode4);
-                    break;
-                  case 4:
-                    FocusScope.of(context).requestFocus(focusNode5);
-                    break;
-                  case 5:
-                    FocusScope.of(context).requestFocus(focusNode6);
-                    break;
-                  default:
-                    FocusScope.of(context).unfocus();
-                    break;
-                }
+        child: AppWidgets().getCustomEditTextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          autofocus: key.contains("1") ? true : false,
+          focusNode: fn,
+          style: AppTheme.textFieldTitlePrimaryColored,
+          onChanged: (String value) {
+            value.trim();
+            if (value.length == 1) {
+              code += value;
+              code.trim();
+              switch (code.length) {
+                case 1:
+                  FocusScope.of(context).requestFocus(focusNode2);
+                  break;
+                case 2:
+                  FocusScope.of(context).requestFocus(focusNode3);
+                  break;
+                case 3:
+                  FocusScope.of(context).requestFocus(focusNode4);
+                  break;
+                case 4:
+                  FocusScope.of(context).requestFocus(focusNode5);
+                  break;
+                case 5:
+                  FocusScope.of(context).requestFocus(focusNode6);
+                  break;
+                default:
+                  FocusScope.of(context).unfocus();
+                  break;
               }
-            },
-            maxLengthEnforced: false,
-            textAlign: TextAlign.center,
-            // cursorColor: AppTheme.nearlyDarkBlue,
-            keyboardType: TextInputType.number,
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.getPrimaryColor(),
-            ),
-          ),
+            } else {
+              code = code.substring(0, code.length - 1);
+              code.trim();
+              // printLog(code);
+            }
+          },
+          textAlign: TextAlign.center,
         ),
       );
 }

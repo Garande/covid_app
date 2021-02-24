@@ -365,6 +365,10 @@ class SignInScreenState extends State<SignInScreen>
 
   String userPhoneNumber; //phone number with the country code for firebase auth
 
+  TextEditingController phoneEditingController = new TextEditingController();
+  String countryDialCode = '+256';
+  String countryNameCode = 'UG';
+
   Widget _buildSignInWithPhone() {
     return SingleChildScrollView(
       child: Stack(
@@ -448,6 +452,7 @@ class SignInScreenState extends State<SignInScreen>
                                           AppWidgets().getCustomEditTextField(
                                             hintValue: 'xxxxxxxxx',
                                             prefixWidget: countryCodeWidget(),
+                                            controller: phoneEditingController,
                                             style: AppTheme
                                                 .textFieldTitlePrimaryColored,
                                             keyboardType: TextInputType.number,
@@ -469,7 +474,12 @@ class SignInScreenState extends State<SignInScreen>
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                // signIn(phoneEditingController.text,
+                                //     countryDialCode, countryNameCode);
+
+                                _tabController.animateTo(1);
+                              },
                               child:
                                   signupSubmitButton(iconPath: 'login_submit'),
                             )
@@ -486,47 +496,48 @@ class SignInScreenState extends State<SignInScreen>
       ),
     );
 
-    return PhonePage(
-      logoPath: logoPath,
-      startAuth: (var phoneNumber, var countryCode, var countryCodeName) {
-        if (phoneNumber.toString().isNotEmpty) {
-          countryCodeTxt = countryCode;
-          phoneNumberTxt = (phoneNumber.toString()[0] == '0'
+    // return PhonePage(
+    //   logoPath: logoPath,
+    //   startAuth:
+    // );
+  }
+
+  void signIn(var phoneNumber, var countryCode, var countryCodeName) {
+    if (phoneNumber.toString().isNotEmpty) {
+      countryCodeTxt = countryCode;
+      phoneNumberTxt = (phoneNumber.toString()[0] == '0'
+          ? phoneNumber.toString().substring(1)
+          : phoneNumber.toString());
+
+      countryCodeNameTxt = countryCodeName;
+      userId = countryCodeNameTxt + phoneNumberTxt;
+
+      phoneNumber = countryCode +
+          (phoneNumber.toString()[0] == '0'
               ? phoneNumber.toString().substring(1)
               : phoneNumber.toString());
+      // print(phoneNumber);
+      // print(countryCodeName);
 
-          countryCodeNameTxt = countryCodeName;
-          userId = countryCodeNameTxt + phoneNumberTxt;
+      userPhoneNumber = phoneNumber;
 
-          phoneNumber = countryCode +
-              (phoneNumber.toString()[0] == '0'
-                  ? phoneNumber.toString().substring(1)
-                  : phoneNumber.toString());
-          // print(phoneNumber);
-          // print(countryCodeName);
-
-          userPhoneNumber = phoneNumber;
-
-          BlocProvider.of<AuthenticationBloc>(context)
-              .add(ClickedGooglSignIn());
-        } else {
-          _scaffoldKey.currentState
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Phone Number can not be empty...'),
-                    Icon(Icons.error),
-                  ],
-                ),
-                backgroundColor: Colors.red,
-              ),
-            );
-        }
-      },
-    );
+      BlocProvider.of<AuthenticationBloc>(context).add(ClickedGooglSignIn());
+    } else {
+      _scaffoldKey.currentState
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Phone Number can not be empty...'),
+                Icon(Icons.error),
+              ],
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+    }
   }
 
   Widget signupSubmitButton({String iconPath}) {
@@ -554,6 +565,9 @@ class SignInScreenState extends State<SignInScreen>
         textStyle: AppTheme.textFieldTitle,
         onChanged: (value) {
           // _selectedCountryCode = value.dialCode;
+
+          countryDialCode = value.dialCode;
+          countryNameCode = value.code;
         },
         // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
         initialSelection: 'UG',

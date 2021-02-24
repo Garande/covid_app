@@ -11,3 +11,12 @@ class Helper {
     return dateFormat.format(dateTime);
   }
 }
+
+const TAG = "[COVID]";
+const ENABLE_PRINT_LOG = true;
+
+printLog(dynamic data) {
+  if (ENABLE_PRINT_LOG) {
+    print("$TAG${data.toString()}");
+  }
+}
