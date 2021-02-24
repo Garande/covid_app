@@ -4,7 +4,7 @@ class AppTheme {
   AppTheme._();
 
   static Color getPrimaryColor() {
-    return Colors.green;
+    return primaryColor;
   }
 
   static Color getSecondaryColor() {
@@ -68,6 +68,10 @@ class AppTheme {
 
   static const Color primaryColor = const Color(0xFF8F94FB);
   static const Color primaryColorDark = const Color(0xFF4E54C8);
+
+  static const Color overlayDark = const Color(0x208F94FB);
+
+  static const Color lightColor = const Color(0xffDBDDF4);
 
   // static const String fontName = 'WorkSans';
   static const String fontName = 'NunitoSans';
@@ -151,7 +155,50 @@ class AppTheme {
     color: lightText, // was lightText
   );
 
+  static TextStyle displayTextBoldColoured = TextStyle(
+    fontFamily: fontName,
+    color: getPrimaryColor(),
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle textFieldTitlePrimaryColored = TextStyle(
+    fontFamily: fontName,
+    color: getPrimaryDarkColor(),
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle textFieldTitle = TextStyle(
+    fontFamily: fontName,
+    color: getPrimaryColor(),
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
+
   static getPrimaryDarkColor() {
     return primaryColorDark;
   }
+
+  //card boxShadow
+  static List<BoxShadow> boxShadow = [
+    BoxShadow(
+      color: overlayDark,
+      offset: Offset(0.0, 3.0),
+      blurRadius: 7.0,
+    ),
+  ];
+  //icon boxShadow
+  static List<BoxShadow> iconBoxShadow = [
+    BoxShadow(
+      color: overlayDark,
+      offset: Offset(1, 6.0),
+      blurRadius: 15.0,
+    ),
+    BoxShadow(
+      color: overlayDark,
+      offset: Offset(1, 6.0),
+      blurRadius: 15.0,
+    ),
+  ];
 }

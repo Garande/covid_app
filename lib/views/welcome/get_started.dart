@@ -1,4 +1,5 @@
 import 'package:covid_app/utils/app_theme.dart';
+import 'package:covid_app/views/welcome/sign_in.dart';
 import 'package:covid_app/views/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
@@ -70,7 +71,10 @@ class _GetStartedState extends State<GetStarted> {
       nameNextBtn: "NEXT",
       namePrevBtn: "PREV",
       nameDoneBtn: "SIGNUP",
-      onDonePress: () {},
+      onDonePress: () {
+        Navigator.of(context).pushReplacement(
+            new MaterialPageRoute(builder: (context) => SignInScreen()));
+      },
     );
   }
 
@@ -115,11 +119,9 @@ class _GetStartedState extends State<GetStarted> {
               Padding(
                 padding:
                     const EdgeInsets.only(left: 20.0, right: 20.0, top: 30.0),
-                child: InkWell(
+                child: Button(
+                  text: 'Get Started',
                   onTap: () {},
-                  child: Button(
-                    text: 'Get Started',
-                  ),
                 ),
               )
             ],

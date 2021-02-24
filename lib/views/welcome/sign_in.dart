@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/utils/Paths.dart';
@@ -6,6 +7,7 @@ import 'package:covid_app/views/drawer/navigation_home_screen.dart';
 import 'package:covid_app/views/welcome/auth_screen.dart';
 import 'package:covid_app/views/welcome/profile_update_screen.dart';
 import 'package:covid_app/views/welcome/verify_auth_screen.dart';
+import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,23 +50,24 @@ class SignInScreenState extends State<SignInScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: AppTheme.nearlyWhite,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(2),
-        child: Row(children: [
-          new TabBar(
-            isScrollable: true,
-            controller: _tabController,
-            indicatorColor: Colors.transparent,
-            tabs: <Tab>[
-              // new Tab(child: Container()),
-              new Tab(child: Container()),
-              new Tab(child: Container()),
-              new Tab(child: Container()),
-            ],
-          ),
-        ]),
-      ),
+      // backgroundColor: Colors.orangeAccent,
+      // backgroundColor: AppTheme.nearlyWhite,
+      // appBar: PreferredSize(
+      //   preferredSize: Size.fromHeight(2),
+      //   child: Row(children: [
+      //     new TabBar(
+      //       isScrollable: true,
+      //       controller: _tabController,
+      //       indicatorColor: Colors.transparent,
+      //       tabs: <Tab>[
+      //         // new Tab(child: Container()),
+      //         new Tab(child: Container()),
+      //         new Tab(child: Container()),
+      //         new Tab(child: Container()),
+      //       ],
+      //     ),
+      //   ]),
+      // ),
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (BuildContext context, AuthenticationState state) {
           if (state is AuthInProgress) {
@@ -231,20 +234,37 @@ class SignInScreenState extends State<SignInScreen>
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
             builder: (BuildContext context, AuthenticationState state) {
+          // return Container(
+          //   color: Colors.redAccent,
+          // );
           return Flex(
             children: <Widget>[
-              Expanded(
-                child: Container(
-                  child: new TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
+              Container(
+                height: 0.0,
+                child: Row(children: [
+                  new TabBar(
+                    isScrollable: true,
                     controller: _tabController,
-                    children: <Widget>[
-                      // _buildSignInWithGoogle(),
-                      _buildSignInWithPhone(),
-                      _buildVerifyPhone(),
-                      _buildUpdateProfileInfo(),
+                    indicatorColor: Colors.transparent,
+                    tabs: <Tab>[
+                      // new Tab(child: Container()),
+                      new Tab(child: Container()),
+                      new Tab(child: Container()),
+                      new Tab(child: Container()),
                     ],
                   ),
+                ]),
+              ),
+              Expanded(
+                child: new TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: _tabController,
+                  children: <Widget>[
+                    // _buildSignInWithGoogle(),
+                    _buildSignInWithPhone(),
+                    _buildVerifyPhone(),
+                    _buildUpdateProfileInfo(),
+                  ],
                 ),
               ),
             ],
@@ -346,6 +366,126 @@ class SignInScreenState extends State<SignInScreen>
   String userPhoneNumber; //phone number with the country code for firebase auth
 
   Widget _buildSignInWithPhone() {
+    return SingleChildScrollView(
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height / 2.2,
+                decoration: BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: [
+                      AppTheme.getPrimaryColor(),
+                      AppTheme.getPrimaryDarkColor(),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomRight,
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  // BEGIN:: LOGO SECTION
+                  Padding(
+                    padding: EdgeInsets.only(top: 75.0),
+                    child: Image.asset(
+                      'assets/images/logo-light.png',
+                      height: 68,
+                    ),
+                  ),
+                  // BEGIN CARD SECTION
+                  Container(
+                    padding: EdgeInsets.only(top: 60),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: <Widget>[
+                            Center(
+                              // padding: const EdgeInsets.symmetric(
+                              //   horizontal: 20,
+                              // ),
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 30.0),
+                                decoration: new BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(
+                                      10.0,
+                                    ),
+                                  ),
+                                  boxShadow: AppTheme.boxShadow,
+                                  color: Colors.white,
+                                ),
+                                width: MediaQuery.of(context).size.width - 50,
+                                // height: 340.0,
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 20.0,
+                                    ),
+                                    Text(
+                                      'SIGN IN',
+                                      style: AppTheme.displayTextBoldColoured,
+                                    ),
+                                    Container(
+                                      width: 60,
+                                      height: 2,
+                                      color: AppTheme.getPrimaryColor(),
+                                    ),
+                                    SizedBox(height: 25.0),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          AppWidgets().getCustomEditTextField(
+                                            hintValue: 'xxxxxxxxx',
+                                            prefixWidget: countryCodeWidget(),
+                                            style: AppTheme
+                                                .textFieldTitlePrimaryColored,
+                                            keyboardType: TextInputType.number,
+                                          ),
+                                          SizedBox(height: 20.0),
+                                          Text(
+                                            'By tapping continue, you agree to Terms and Conditions and Privacy Policy of COVID APP',
+                                            style: AppTheme.subTitleTextColored,
+                                          ),
+                                          SizedBox(height: 20.0),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {},
+                              child:
+                                  signupSubmitButton(iconPath: 'login_submit'),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    );
+
     return PhonePage(
       logoPath: logoPath,
       startAuth: (var phoneNumber, var countryCode, var countryCodeName) {
@@ -386,6 +526,45 @@ class SignInScreenState extends State<SignInScreen>
             );
         }
       },
+    );
+  }
+
+  Widget signupSubmitButton({String iconPath}) {
+    return Container(
+      decoration: new BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+        boxShadow: AppTheme.iconBoxShadow,
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Image.asset(
+          'assets/images/getStartedImages/${iconPath}.png',
+          width: 45,
+          height: 45,
+        ),
+      ),
+    );
+  }
+
+  Widget countryCodeWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: CountryCodePicker(
+        textStyle: AppTheme.textFieldTitle,
+        onChanged: (value) {
+          // _selectedCountryCode = value.dialCode;
+        },
+        // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+        initialSelection: 'UG',
+        // favorite: '+256',
+        // optional. Shows only country name and flag
+        showCountryOnly: false,
+        // optional. Shows only country name and flag when popup is closed.
+        showOnlyCountryWhenClosed: false,
+        // optional. aligns the flag and the Text left
+        alignLeft: false,
+      ),
     );
   }
 

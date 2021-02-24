@@ -42,6 +42,7 @@ class SimpleBlocObserver extends BlocObserver {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   Bloc.observer = SimpleBlocObserver();
 
@@ -56,33 +57,18 @@ void main() async {
     DeviceOrientation.portraitDown
   ]).then(
     (_) => runApp(
-      FutureBuilder(
-          future: Firebase.initializeApp(),
-          builder: (context, snapshot) {
-            // Check for errors
-            if (snapshot.hasError) {
-              return Center(
-                child: Text('Error occured'),
-              );
-            }
-
-            if (snapshot.connectionState == ConnectionState.done) {
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider<AuthenticationBloc>(
-                    create: (context) => AuthenticationBloc(
-                        authenticationRepository: authenticationRepository,
-                        userDataRepository: userDataRepository,
-                        storageRepository: storageRepository)
-                      ..add(AppLaunched()),
-                  ),
-                ],
-                child: MyApp(),
-              );
-            }
-
-            return CircularProgressIndicator();
-          }),
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthenticationBloc>(
+            create: (context) => AuthenticationBloc(
+                authenticationRepository: authenticationRepository,
+                userDataRepository: userDataRepository,
+                storageRepository: storageRepository)
+              ..add(AppLaunched()),
+          ),
+        ],
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -90,22 +76,24 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness:
-          Platform.isAndroid ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarDividerColor: Colors.grey,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
+    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    //   statusBarColor: Colors.transparent,
+    //   statusBarIconBrightness: Brightness.dark,
+    //   statusBarBrightness:
+    //       Platform.isAndroid ? Brightness.dark : Brightness.light,
+    //   systemNavigationBarColor: Colors.white,
+    //   systemNavigationBarDividerColor: Colors.grey,
+    //   systemNavigationBarIconBrightness: Brightness.dark,
+    // ));
     return MaterialApp(
       title: 'COVID',
       debugShowCheckedModeBanner: false,
+      // themeMode: ThemeMode.dark,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: AppTheme.fontName,
         // textTheme: new TextTheme(),
-        platform: TargetPlatform.iOS,
+        // platform: TargetPlatform.iOS,
       ),
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {

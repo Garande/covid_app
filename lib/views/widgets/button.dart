@@ -50,9 +50,8 @@ class Button extends StatelessWidget {
           ),
         ),
         child: Material(
-          color: AppTheme.getPrimaryColor(),
           borderRadius: borderRadius,
-          // color: Colors.transparent,
+          color: Colors.transparent,
           child: InkWell(
             borderRadius: borderRadius,
             highlightColor: Colors.transparent,
