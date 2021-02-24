@@ -9,6 +9,7 @@ import 'package:covid_app/views/drawer/navigation_home_screen.dart';
 import 'package:covid_app/views/welcome/get_started.dart';
 import 'package:covid_app/views/welcome/sign_in.dart';
 import 'package:covid_app/views/welcome/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,18 +56,33 @@ void main() async {
     DeviceOrientation.portraitDown
   ]).then(
     (_) => runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthenticationBloc>(
-            create: (context) => AuthenticationBloc(
-                authenticationRepository: authenticationRepository,
-                userDataRepository: userDataRepository,
-                storageRepository: storageRepository)
-              ..add(AppLaunched()),
-          ),
-        ],
-        child: MyApp(),
-      ),
+      FutureBuilder(
+          future: Firebase.initializeApp(),
+          builder: (context, snapshot) {
+            // Check for errors
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Error occured'),
+              );
+            }
+
+            if (snapshot.connectionState == ConnectionState.done) {
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider<AuthenticationBloc>(
+                    create: (context) => AuthenticationBloc(
+                        authenticationRepository: authenticationRepository,
+                        userDataRepository: userDataRepository,
+                        storageRepository: storageRepository)
+                      ..add(AppLaunched()),
+                  ),
+                ],
+                child: MyApp(),
+              );
+            }
+
+            return CircularProgressIndicator();
+          }),
     ),
   );
 }
