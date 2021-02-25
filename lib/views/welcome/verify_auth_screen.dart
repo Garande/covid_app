@@ -2,6 +2,7 @@ import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
+import 'package:covid_app/views/widgets/custom_clipper.dart';
 import 'package:flutter/material.dart';
 
 class PhoneAuthVerify extends StatefulWidget {
@@ -64,18 +65,21 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
         children: <Widget>[
           Stack(
             children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height / 2.2,
-                decoration: BoxDecoration(
-                  gradient: new LinearGradient(
-                    colors: [
-                      AppTheme.getPrimaryColor(),
-                      AppTheme.getPrimaryDarkColor(),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomRight,
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
+              ClipPath(
+                clipper: MyCustomClipper(clipType: ClipType.bottom),
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 2.2,
+                  decoration: BoxDecoration(
+                    gradient: new LinearGradient(
+                      colors: [
+                        AppTheme.getPrimaryColor(),
+                        AppTheme.getPrimaryDarkColor(),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomRight,
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp,
+                    ),
                   ),
                 ),
               ),
@@ -88,13 +92,21 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
+                        SizedBox(
+                          width: 34,
+                          child: RawMaterialButton(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            onPressed: widget.navigateBack,
+                            child: Icon(Icons.arrow_back_ios,
+                                size: 15.0, color: Colors.white),
+                            shape: CircleBorder(
+                              side: BorderSide(
+                                  color: Colors.white,
+                                  width: 2,
+                                  style: BorderStyle.solid),
+                            ),
                           ),
-                          onPressed: widget.navigateBack,
-                          alignment: Alignment.centerLeft,
                         ),
                       ],
                     ),
@@ -141,11 +153,11 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                                       height: 20.0,
                                     ),
                                     Text(
-                                      'VERIFY PHONE',
+                                      'VERIFY',
                                       style: AppTheme.displayTextBoldColoured,
                                     ),
                                     Container(
-                                      width: 110,
+                                      width: 50,
                                       height: 2,
                                       color: AppTheme.getPrimaryColor(),
                                     ),
@@ -207,6 +219,12 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                                             ],
                                           ),
                                           SizedBox(height: 20.0),
+                                          Text(
+                                            'If you didn\'t receive the code, Please tap resend to get the code again',
+                                            textAlign: TextAlign.justify,
+                                            style: AppTheme.subTitleTextColored,
+                                          ),
+                                          SizedBox(height: 20.0),
                                           FlatButton(
                                             onPressed: widget.resendOtp,
                                             child: Text(
@@ -226,7 +244,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 50,
+                                      height: 30,
                                     )
                                   ],
                                 ),

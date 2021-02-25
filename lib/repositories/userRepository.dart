@@ -14,7 +14,7 @@ class UserDataRepository {
           user, googleUser, phoneNumber, countryCode, userId);
 
   Future<AppUser> saveUserProfileDetails(AppUser user) async {
-    return await userDataProvider.saveUserProfileDetails(user);
+    return userDataProvider.saveUserProfileDetails(user);
   }
 
   Future<AppUser> updateUserDetails(

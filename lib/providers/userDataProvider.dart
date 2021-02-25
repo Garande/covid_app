@@ -31,7 +31,7 @@ class UserDataProvider extends BaseUserDataProvider {
 
   @override
   Future<AppUser> saveUserProfileDetails(AppUser user) async {
-    return await updateUserDetails(user.userId, user.toJson());
+    return updateUserDetails(user.userId, user.toJson());
   }
 
   @override

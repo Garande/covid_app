@@ -8,6 +8,7 @@ import 'package:covid_app/views/welcome/auth_screen.dart';
 import 'package:covid_app/views/welcome/profile_update_screen.dart';
 import 'package:covid_app/views/welcome/verify_auth_screen.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
+import 'package:covid_app/views/widgets/custom_clipper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -50,24 +51,6 @@ class SignInScreenState extends State<SignInScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      // backgroundColor: Colors.orangeAccent,
-      // backgroundColor: AppTheme.nearlyWhite,
-      // appBar: PreferredSize(
-      //   preferredSize: Size.fromHeight(2),
-      //   child: Row(children: [
-      //     new TabBar(
-      //       isScrollable: true,
-      //       controller: _tabController,
-      //       indicatorColor: Colors.transparent,
-      //       tabs: <Tab>[
-      //         // new Tab(child: Container()),
-      //         new Tab(child: Container()),
-      //         new Tab(child: Container()),
-      //         new Tab(child: Container()),
-      //       ],
-      //     ),
-      //   ]),
-      // ),
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (BuildContext context, AuthenticationState state) {
           if (state is AuthInProgress) {
@@ -169,8 +152,6 @@ class SignInScreenState extends State<SignInScreen>
                   userId: userId,
                   googleUser: googleFirebaseUser));
             } else {
-              // print('==================================================');
-              // print("Signing out");
               BlocProvider.of<AuthenticationBloc>(context).add(ClickedLogout());
             }
 
@@ -217,7 +198,8 @@ class SignInScreenState extends State<SignInScreen>
           if (state is PreFillData) {
             AppUser user = state.user;
             populateFields(user);
-            _tabController.animateTo(2);
+            completeUserProfile();
+            // _tabController.animateTo(2);
           }
 
           if (state is ProfileComplete) {
@@ -376,18 +358,21 @@ class SignInScreenState extends State<SignInScreen>
         children: <Widget>[
           Stack(
             children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height / 2.2,
-                decoration: BoxDecoration(
-                  gradient: new LinearGradient(
-                    colors: [
-                      AppTheme.getPrimaryColor(),
-                      AppTheme.getPrimaryDarkColor(),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomRight,
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp,
+              ClipPath(
+                clipper: MyCustomClipper(clipType: ClipType.bottom),
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 2.2,
+                  decoration: BoxDecoration(
+                    gradient: new LinearGradient(
+                      colors: [
+                        AppTheme.getPrimaryColor(),
+                        AppTheme.getPrimaryDarkColor(),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomRight,
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp,
+                    ),
                   ),
                 ),
               ),
@@ -475,10 +460,10 @@ class SignInScreenState extends State<SignInScreen>
                             ),
                             GestureDetector(
                               onTap: () {
-                                // signIn(phoneEditingController.text,
-                                //     countryDialCode, countryNameCode);
+                                signIn(phoneEditingController.text,
+                                    countryDialCode, countryNameCode);
 
-                                _tabController.animateTo(1);
+                                // _tabController.animateTo(1);
                               },
                               child:
                                   signupSubmitButton(iconPath: 'login_submit'),

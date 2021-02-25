@@ -2,6 +2,7 @@ import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/views/drawer/drawer_user_controller.dart';
 import 'package:covid_app/views/drawer/feedback_screen.dart';
 import 'package:covid_app/views/drawer/home_drawer.dart';
+import 'package:covid_app/views/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'help_screen.dart';
@@ -18,7 +19,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   @override
   void initState() {
     drawerIndex = DrawerIndex.HOME;
-    // screenView = UserHome();
+    screenView = HomeScreen();
     super.initState();
   }
 
@@ -50,9 +51,9 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     if (drawerIndex != drawerIndexdata) {
       drawerIndex = drawerIndexdata;
       if (drawerIndex == DrawerIndex.HOME) {
-        // setState(() {
-        //   screenView = UserHome();
-        // });
+        setState(() {
+          screenView = HomeScreen();
+        });
       } else if (drawerIndex == DrawerIndex.Help) {
         setState(() {
           screenView = HelpScreen();

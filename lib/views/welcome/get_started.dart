@@ -59,7 +59,7 @@ class _GetStartedState extends State<GetStarted> {
   @override
   Widget build(BuildContext context) {
     return IntroSlider(
-      shouldHideStatusBar: true,
+      shouldHideStatusBar: false,
       colorActiveDot: AppTheme.getPrimaryColor(),
       isShowSkipBtn: true,
       isShowPrevBtn: true,
