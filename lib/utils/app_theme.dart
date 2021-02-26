@@ -73,6 +73,16 @@ class AppTheme {
 
   static const Color lightColor = const Color(0xffDBDDF4);
 
+  static const Color titleTextColor = Color(0xFF303030);
+
+  static const Color textLightColor = Color(0xFF959595);
+
+  static const Color warningColor = Color(0xFFFF8748);
+
+  static const Color dangerColor = Color(0xFFFF4848);
+
+  static const Color successColor = Color(0xFF36C12C);
+
   // static const String fontName = 'WorkSans';
   static const String fontName = 'NunitoSans';
 
@@ -174,6 +184,17 @@ class AppTheme {
     color: getPrimaryColor(),
     fontSize: 14,
     fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle titleTextStyle = TextStyle(
+    fontSize: 18,
+    color: titleTextColor,
+    fontWeight: FontWeight.bold,
+  );
+
+  static TextStyle subTextStyle = TextStyle(
+    fontSize: 16,
+    color: textLightColor,
   );
 
   static getPrimaryDarkColor() {

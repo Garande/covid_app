@@ -98,6 +98,7 @@ class MyApp extends StatelessWidget {
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state is UnAuthenticated) {
+            return NavigationHomeScreen();
             return GetStarted();
           } else if (state is UnAuthenticated ||
               state is GoogleAuthenticated ||
@@ -107,6 +108,7 @@ class MyApp extends StatelessWidget {
               state is Authenticated ||
               state is ProfileUpdateInProgress ||
               state is PreFillData) {
+            return NavigationHomeScreen();
             return SignInScreen(); //Sigin in with phone index 1
           } else if (state is ProfileUpdated) {
             return NavigationHomeScreen();

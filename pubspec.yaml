@@ -35,10 +35,12 @@ dependencies:
   firebase_core: ^0.7.0
   firebase_storage: ^7.0.0
   flutter_bloc: ^6.1.2
+  flutter_svg: ^0.19.0
   google_sign_in: ^4.5.9
   http: ^0.12.2
   intl: ^0.16.1
   intro_slider: ^2.3.4
+  json_annotation: ^3.1.1
   meta: ^1.2.4
   pin_entry_text_field: ^0.1.4
   provider: ^4.3.3
@@ -48,6 +50,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  json_serializable: ^3.2.5
+  build_runner: ^1.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

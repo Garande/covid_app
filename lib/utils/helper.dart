@@ -10,6 +10,11 @@ class Helper {
     var dateFormat = new DateFormat.yMd().add_jm();
     return dateFormat.format(dateTime);
   }
+
+  static String formatNumber(int number) {
+    final numberFormat = new NumberFormat();
+    return numberFormat.format(number);
+  }
 }
 
 const TAG = "[COVID]";

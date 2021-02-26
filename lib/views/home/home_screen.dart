@@ -1,6 +1,11 @@
+import 'package:covid_app/blocs/corona/corona_bloc.dart';
+import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/views/widgets/card_main.dart';
+import 'package:covid_app/views/widgets/counter.dart';
 import 'package:covid_app/views/widgets/custom_clipper.dart';
+import 'package:covid_app/views/widgets/page_header.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -9,20 +14,163 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  final controller = ScrollController();
+  double offset = 0;
+
+  CoronaBloc _coronaBloc;
+  // CoronaTotalCount coronaTotalCount;
+
   @override
   void initState() {
+    _coronaBloc = CoronaBloc();
+    fetchData();
     super.initState();
+    controller.addListener(onScroll);
   }
 
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
+  }
+
+  void onScroll() {
+    setState(() {
+      offset = (controller.hasClients) ? controller.offset : 0;
+    });
+  }
+
+  fetchData() async {
+    // coronaTotalCount = await _coronaBloc.fetchAllTotalCount();
   }
   // llkl
 
   @override
   Widget build(BuildContext context) {
     double statusBarHeight = MediaQuery.of(context).padding.top;
+
+    return Scaffold(
+      backgroundColor: AppTheme.white,
+      body: SingleChildScrollView(
+        controller: controller,
+        child: Column(
+          children: [
+            ////////////////
+            ///
+            PageHeader(
+              image: "assets/images/icons/Drcorona.svg",
+              message: 'All you need\n is stay at home.',
+              offset: offset,
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Case Update\n",
+                              style: AppTheme.titleTextStyle,
+                            ),
+                            TextSpan(
+                              text: "Newest update March 28",
+                              style: TextStyle(
+                                color: AppTheme.textLightColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        "See details",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryColor,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      boxShadow: AppTheme.boxShadow,
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ),
+                      color: Colors.white,
+                    ),
+                    child: FutureBuilder<CoronaTotalCount>(
+                        future: _coronaBloc.fetchAllTotalCount(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData &&
+                              snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (snapshot.error != null) {
+                            return Padding(
+                                padding: EdgeInsets.only(top: 16, bottom: 16),
+                                child: Center(
+                                  child:
+                                      Text('Error fetching total count data'),
+                                ));
+                          }
+
+                          CoronaTotalCount coronaTotalCount = snapshot.data;
+
+                          return Container(
+                            height: 100,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                Counter(
+                                  color: AppTheme.warningColor,
+                                  number: coronaTotalCount.confirmed,
+                                  title: "Infected",
+                                ),
+                                Counter(
+                                  color: AppTheme.dangerColor,
+                                  number: coronaTotalCount.deaths,
+                                  title: "Deaths",
+                                ),
+                                Counter(
+                                  color: AppTheme.successColor,
+                                  number: coronaTotalCount.recovered,
+                                  title: "Recovered",
+                                ),
+                              ],
+                            ),
+                          );
+
+                          // return Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+
+                          //   ],
+                          // );
+                        }),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
     return Scaffold(
       backgroundColor: AppTheme.white,
       body: Stack(
