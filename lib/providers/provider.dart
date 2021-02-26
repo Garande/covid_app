@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/user_movement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class BaseAuthenticationProvider {
@@ -36,4 +37,15 @@ abstract class BaseUserDataProvider {
 
 abstract class BaseStorageProvider {
   Future<String> uploadImage(File file, String storagePath);
+}
+
+abstract class BaseMovementsProvider {
+  Future<void> saveUserMovement(UserMovement userMovement);
+
+  Future<List<UserMovement>> fetchUserMovements(String userId);
+
+  Future<UserMovement> fetchUserLastMovement(String userId);
+
+  Future<List<UserMovement>> fetchUserMovementsBetween(
+      String userId, DateTime dateTimeFrom, DateTime dateTimeTo);
 }

@@ -201,6 +201,22 @@ class AppTheme {
     return primaryColorDark;
   }
 
+  static TextStyle displayTextOne = TextStyle(
+    fontFamily: fontName,
+    color: grey,
+    fontSize: 18,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
+  static TextStyle subTitleText = TextStyle(
+    fontFamily: fontName,
+    color: grey,
+    fontSize: 14,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.normal,
+  );
+
   //card boxShadow
   static List<BoxShadow> boxShadow = [
     BoxShadow(
