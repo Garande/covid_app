@@ -23,4 +23,18 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
   Future<void> saveUserMovement(UserMovement userMovement) {
     return _movementsRepository.saveUserMovement(userMovement);
   }
+
+  Future<List<UserMovement>> fetchUserMovements(String userId) =>
+      _movementsRepository.fetchUserMovements(userId);
+
+  Future<List<UserMovement>> fetchUserMovementsForRange({
+    String userId,
+    DateTime dateTime1,
+    DateTime dateTime2,
+  }) =>
+      _movementsRepository.fetchUserMovementsForRange(
+        userId: userId,
+        dateTimeFrom: dateTime1,
+        dateTimeTo: dateTime2,
+      );
 }

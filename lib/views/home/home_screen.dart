@@ -1,11 +1,13 @@
 import 'package:covid_app/blocs/corona/corona_bloc.dart';
 import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/utils/app_theme.dart';
+import 'package:covid_app/utils/helper.dart';
+import 'package:covid_app/views/board/barcode_scan_screen.dart';
+import 'package:covid_app/views/widgets/card_button.dart';
 import 'package:covid_app/views/widgets/card_main.dart';
 import 'package:covid_app/views/widgets/counter.dart';
 import 'package:covid_app/views/widgets/custom_clipper.dart';
 import 'package:covid_app/views/widgets/page_header.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -43,6 +45,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   fetchData() async {
     // coronaTotalCount = await _coronaBloc.fetchAllTotalCount();
   }
+
+  bool hasFetched = false;
+
   // llkl
 
   @override
@@ -57,115 +62,182 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           children: [
             ////////////////
             ///
-            PageHeader(
-              image: "assets/images/icons/Drcorona.svg",
-              message: 'All you need\n is stay at home.',
-              offset: offset,
-            ),
-
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: Column(
-                children: [
-                  Row(
+            Stack(
+              children: [
+                PageHeader(
+                  image: "assets/images/icons/Drcorona.svg",
+                  message: 'All you need\n is stay at home.',
+                  offset: offset,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Case Update\n",
-                              style: AppTheme.titleTextStyle,
+                      SizedBox(
+                        height: 160,
+                      ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxHeight: 100,
+                        ),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: <Widget>[
+                            CardButton(
+                              image: AssetImage(
+                                  'assets/images/icons/heartbeat.png'),
+                              color: AppTheme.lightGreen,
+                              children: [
+                                Text(
+                                  'Pair 2 Ride',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppTheme.getPrimaryColor(),
+                                  ),
+                                ),
+                              ],
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  new MaterialPageRoute(
+                                    builder: (context) => BarcodeScanScreen(),
+                                  ),
+                                );
+                              },
                             ),
-                            TextSpan(
-                              text: "Newest update March 28",
-                              style: TextStyle(
-                                color: AppTheme.textLightColor,
-                              ),
-                            ),
+                            CardButton(
+                              image: AssetImage(
+                                  'assets/images/icons/blooddrop.png'),
+                              color: AppTheme.lightYellow,
+                              children: [
+                                Text(
+                                  'Trips',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppTheme.getPrimaryColor(),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
-                      Spacer(),
-                      Text(
-                        "See details",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryColor,
-                        ),
-                      )
                     ],
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      boxShadow: AppTheme.boxShadow,
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ),
-                      color: Colors.white,
+                )
+              ],
+            ),
+
+            FutureBuilder<CoronaTotalCount>(
+                future: _coronaBloc.fetchAllTotalCount(),
+                builder: (context, snapshot) {
+                  hasFetched = false;
+                  CoronaTotalCount coronaTotalCount = CoronaTotalCount(
+                      confirmed: 1445556, deaths: 9889449, recovered: 323233);
+                  if (snapshot.hasData) {
+                    coronaTotalCount = snapshot.data;
+                    hasFetched = true;
+                  }
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
                     ),
-                    child: FutureBuilder<CoronaTotalCount>(
-                        future: _coronaBloc.fetchAllTotalCount(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData &&
-                              snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          if (snapshot.error != null) {
-                            return Padding(
-                                padding: EdgeInsets.only(top: 16, bottom: 16),
-                                child: Center(
-                                  child:
-                                      Text('Error fetching total count data'),
-                                ));
-                          }
-
-                          CoronaTotalCount coronaTotalCount = snapshot.data;
-
-                          return Container(
-                            height: 100,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                Counter(
-                                  color: AppTheme.warningColor,
-                                  number: coronaTotalCount.confirmed,
-                                  title: "Infected",
-                                ),
-                                Counter(
-                                  color: AppTheme.dangerColor,
-                                  number: coronaTotalCount.deaths,
-                                  title: "Deaths",
-                                ),
-                                Counter(
-                                  color: AppTheme.successColor,
-                                  number: coronaTotalCount.recovered,
-                                  title: "Recovered",
-                                ),
-                              ],
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Case Update\n",
+                                    style: AppTheme.titleTextStyle,
+                                  ),
+                                  if (coronaTotalCount != null)
+                                    TextSpan(
+                                      text:
+                                          "Newest update ${hasFetched ? Helper.formatDateMonth(new DateTime.now()) : Helper.formatDateMonth(new DateTime.now().subtract(Duration(days: 1)))}",
+                                      style: TextStyle(
+                                        color: AppTheme.textLightColor,
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          );
+                            Spacer(),
+                            Text(
+                              "See details",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.primaryColor,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        if (!snapshot.hasData &&
+                            snapshot.connectionState == ConnectionState.waiting)
+                          Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        else if (snapshot.error != null)
+                          Padding(
+                            padding: EdgeInsets.only(top: 16, bottom: 16),
+                            child: Center(
+                              child: Text('Error fetching total count data'),
+                            ),
+                          )
+                        else
+                          Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              boxShadow: AppTheme.boxShadow,
+                              borderRadius: BorderRadius.circular(
+                                10,
+                              ),
+                              color: Colors.white,
+                            ),
+                            child: Container(
+                              // height: 100,
+                              constraints: BoxConstraints(
+                                maxHeight: 130,
+                              ),
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  Counter(
+                                    color: AppTheme.warningColor,
+                                    number: coronaTotalCount.confirmed,
+                                    title: "Infected",
+                                  ),
+                                  Counter(
+                                    color: AppTheme.dangerColor,
+                                    number: coronaTotalCount.deaths,
+                                    title: "Deaths",
+                                  ),
+                                  Counter(
+                                    color: AppTheme.successColor,
+                                    number: coronaTotalCount.recovered,
+                                    title: "Recovered",
+                                  ),
+                                ],
+                              ),
+                            ),
 
-                          // return Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
+                            // return Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
 
-                          //   ],
-                          // );
-                        }),
-                  ),
-                ],
-              ),
-            )
+                            //   ],
+                            // );
+                          ),
+                      ],
+                    ),
+                  );
+                })
           ],
         ),
       ),

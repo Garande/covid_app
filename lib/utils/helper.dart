@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Helper {
   static String formatCurrency(double amount) {
@@ -14,6 +17,22 @@ class Helper {
   static String formatNumber(int number) {
     final numberFormat = new NumberFormat();
     return numberFormat.format(number);
+  }
+
+  /// Select image from the user file system
+  static Future<File> selectImage() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    return image;
+  }
+
+  static Future<File> takeImage() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.camera);
+    return image;
+  }
+
+  static String formatDateMonth(DateTime dateTime) {
+    var dateFormat = new DateFormat.MMMMd();
+    return dateFormat.format(dateTime);
   }
 }
 

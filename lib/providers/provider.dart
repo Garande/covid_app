@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:covid_app/models/address.dart';
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/driver.dart';
+import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/user_movement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -48,4 +51,18 @@ abstract class BaseMovementsProvider {
 
   Future<List<UserMovement>> fetchUserMovementsBetween(
       String userId, DateTime dateTimeFrom, DateTime dateTimeTo);
+
+  Future<void> saveDriverInfo(Driver driver);
+
+  Future<Driver> fetchDriverInfo(String driverId);
+
+  Future<void> boardVehicle(Trip trip);
+
+  Future<void> updateTripInfo(Trip trip);
+
+  Future<Trip> fetchTripInfo(String driverId, String userId);
+
+  Future<Trip> fetchTripFromId(String id);
+
+  // Future<void> updateTripDestination(Address address, )
 }

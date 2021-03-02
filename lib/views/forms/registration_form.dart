@@ -4,33 +4,57 @@ import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
+import 'package:covid_app/views/widgets/file_select_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegistrationForm extends StatefulWidget {
+  AppUser appUser;
   @override
   _RegistrationFormState createState() => _RegistrationFormState();
 }
 
-class _RegistrationFormState extends State<RegistrationForm> {
+class _RegistrationFormState extends State<RegistrationForm>
+    with SingleTickerProviderStateMixin {
   TextEditingController nameController = TextEditingController();
   TextEditingController ninController = TextEditingController();
   TextEditingController addressController = TextEditingController();
 
   AuthenticationBloc _authenticationBloc;
 
+  AnimationController _loadingAnimationController;
+  Animation _loadingAnimation;
+  bool isLoading = false;
+
   @override
   void initState() {
     _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _loadingAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 260,
+      ),
+    );
 
+    final curvedAnimation = CurvedAnimation(
+      curve: Curves.easeInOut,
+      parent: _loadingAnimationController,
+    );
+    _loadingAnimation =
+        Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
     super.initState();
-    fetchUser();
+    if (widget.appUser != null) {
+      appUser = widget.appUser;
+      populateFields();
+    } else
+      fetchUser();
   }
 
   void fetchUser() async {
     appUser = await _authenticationBloc.getCurrentUser();
     setState(() {});
+    populateFields();
   }
 
   AppUser appUser;
@@ -38,6 +62,39 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
   List gender = ["Male", "Female", "Other"];
   String select;
+
+  void selectFile() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FileSelectModal(
+        onCameraTap: (file) {
+          Navigator.of(context).pop();
+          setState(() {
+            image = file;
+          });
+          // selectDriverImage(file);
+        },
+        onFolderTap: (file) {
+          Navigator.of(context).pop();
+          setState(() {
+            image = file;
+          });
+        },
+      ),
+    );
+  }
+
+  void populateFields() {
+    if (appUser != null) {
+      setState(() {
+        nameController.text = appUser.name;
+        ninController.text = appUser.nationalIdNo;
+        addressController.text = appUser.address;
+        select = appUser.gender;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,67 +104,75 @@ class _RegistrationFormState extends State<RegistrationForm> {
       appBar: AppBar(
         title: Text('Edit Account'),
         backgroundColor: AppTheme.primaryColor,
-
-        // leading: GestureDetector(
-        //     onTap: () {
-        //       Navigator.of(context).pop();
-        //     },
-        //     child: Icon(Icons.arrow_back_ios)),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Icon(Icons.arrow_back_ios),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                // mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _renderProfileWidget(screenWidth),
-                  // AppWidgets().getCustomEditTextField(
-                  //   hintValue: 'Name',
-                  //   controller: nameController,
-                  //   prefixWidget: Image.asset(
-                  //     'assets/images/icons/person.png',
-                  //     scale: 3,
-                  //   ),
-                  //   keyboardType: TextInputType.text,
-                  //   style: AppTheme.textFieldTitle,
-                  // ),
-                  // SizedBox(height: 15.0),
-                  // AppWidgets().getCustomEditTextField(
-                  //   hintValue: 'National Id No. (NIN)',
-                  //   controller: ninController,
-                  //   prefixWidget: Image.asset(
-                  //     'assets/images/icons/person.png',
-                  //     scale: 3,
-                  //   ),
-                  //   keyboardType: TextInputType.text,
-                  //   style: AppTheme.textFieldTitle,
-                  // ),
-                  // SizedBox(height: 15.0),
-                  // AppWidgets().getCustomEditTextField(
-                  //   hintValue: 'Address',
-                  //   controller: addressController,
-                  //   prefixWidget: Image.asset(
-                  //     'assets/images/icons/person.png',
-                  //     scale: 3,
-                  //   ),
-                  //   keyboardType: TextInputType.text,
-                  //   style: AppTheme.textFieldTitle,
-                  // ),
-                  // SizedBox(height: 15.0),
-                  // Padding(
-                  //   // padding: const EdgeInsets.all(8.0),
-                  //   // child: Button(
-                  //   //   text: 'Register',
-                  //   //   onTap: () {},
-                  //   // ),
-                  // ),
-                ],
+      body: BlocListener<AuthenticationBloc, AuthenticationState>(
+        listener: (BuildContext context, AuthenticationState state) {
+          if (state is ProfileUpdateInProgress) {
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Uploading...'),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              );
+            setState(() {
+              isLoading = true;
+            });
+            _loadingAnimationController.forward();
+          }
+
+          if (state is ProfileComplete) {
+            if (_loadingAnimationController.isCompleted)
+              _loadingAnimationController.reverse();
+            isLoading = false;
+            Navigator.pop(context);
+          }
+        },
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  // mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _renderProfileWidget(screenWidth),
+                  ],
+                ),
               ),
-            )
-          ],
+              isLoading
+                  ? AnimatedBuilder(
+                      animation: _loadingAnimation,
+                      builder: (_, __) {
+                        return IgnorePointer(
+                          ignoring: _loadingAnimation.value == 0,
+                          child: Container(
+                            color: Colors.black.withOpacity(
+                              _loadingAnimation.value * 0.5,
+                            ),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );
@@ -153,6 +218,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           right: 0.0,
                           child: GestureDetector(
                               onTap: () {
+                                selectFile();
                                 // getImage();
                               },
                               child: Container(
@@ -191,7 +257,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
                     AppWidgets().getCustomEditTextField(
                       keyboardType: TextInputType.emailAddress,
-                      controller: nameController,
+                      controller: ninController,
                       hintValue: 'National Id No. (NIN)',
                       prefixWidget: Padding(
                         padding: const EdgeInsets.only(left: 9),
@@ -207,7 +273,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                     AppWidgets().getCustomEditTextField(
                       keyboardType: TextInputType.emailAddress,
                       hintValue: 'Address',
-                      controller: nameController,
+                      controller: addressController,
                       prefixWidget: Padding(
                         padding: const EdgeInsets.only(left: 9),
                         child: Image.asset(
@@ -232,13 +298,17 @@ class _RegistrationFormState extends State<RegistrationForm> {
                           ),
                         ),
                         //Use the above widget where you want the radio button
-                        Row(
-                          children: <Widget>[
-                            addRadioButton(0, 'Male'),
-                            addRadioButton(1, 'Female'),
-                            addRadioButton(2, 'Others'),
-                          ],
-                        ),
+                        Container(
+                          height: 50,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              addRadioButton(0, 'Male'),
+                              addRadioButton(1, 'Female'),
+                              addRadioButton(2, 'Others'),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                     SizedBox(height: 14.0),
@@ -247,49 +317,15 @@ class _RegistrationFormState extends State<RegistrationForm> {
                         horizontal: 0,
                       ),
                       text: 'Save',
-                      onTap: () {},
+                      onTap: () {
+                        appUser.name = nameController.text;
+                        appUser.nationalIdNo = ninController.text;
+                        appUser.address = addressController.text;
+                        appUser.gender = select;
+                        _authenticationBloc
+                            .add(SaveUserProfile(image, appUser));
+                      },
                     ),
-                    //save changes button
-                    // GestureDetector(
-                    //     onTap: () async {
-                    //       /*print(widget.authUser.userId);*/
-                    //       // setState(() {
-                    //       //   isLoading = true;
-                    //       // });
-                    //       // AuthUser user = AuthUser(
-                    //       //     status: widget.authUser.status,
-                    //       //     userId: widget.authUser.userId,
-                    //       //     name: editProfileNameController.text.isNotEmpty
-                    //       //         ? editProfileNameController.text
-                    //       //         : widget.authUser.name,
-                    //       //     email: editProfileEmailController.text.isNotEmpty
-                    //       //         ? editProfileEmailController.text
-                    //       //         : widget.authUser.email,
-                    //       //     phone: editProfilePhoneController.text.isNotEmpty
-                    //       //         ? editProfilePhoneController.value.text
-                    //       //         : widget.authUser.phone,
-                    //       //     meetingCode: widget.authUser.meetingCode,
-                    //       //     imageUrl: widget.authUser.imageUrl,
-                    //       //     gender: select,
-                    //       //     role: widget.authUser.role,
-                    //       //     joinDate: widget.authUser.joinDate,
-                    //       //     lastLogin: widget.authUser.lastLogin);
-
-                    //       // updatedUser = await Repository()
-                    //       //     .updateUserProfile(user, _image);
-                    //       // setState(() {
-                    //       //   isLoading = false;
-                    //       // });
-                    //       // if (updatedUser != null) {
-                    //       //   authService.updateUser(updatedUser);
-                    //       //   widget.profileUpdatedCallback();
-                    //       //   if (this.mounted) {
-                    //       //     setState(() {});
-                    //       //   }
-                    //       // }
-                    //     },
-                    //     child: HelpMe()
-                    //         .submitButton(screnWidth, AppContent.saveChanges))
                   ],
                 ),
               ),

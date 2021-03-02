@@ -12,6 +12,8 @@ class AppUser {
       loginId,
       pushToken,
       role,
+      address,
+      nationalIdNo,
       status;
 
   AppUser({
@@ -27,6 +29,8 @@ class AppUser {
     this.pushToken,
     this.role,
     this.status,
+    this.address,
+    this.nationalIdNo,
   });
 
   factory AppUser.fromFirestore(DocumentSnapshot doc) {
@@ -44,6 +48,8 @@ class AppUser {
       pushToken: data['pushToken'] ?? null,
       role: data['role'] ?? null,
       status: data['status'] ?? null,
+      nationalIdNo: data['nationalIdNo'] ?? null,
+      address: data['address'] ?? null,
     );
   }
 
@@ -61,23 +67,27 @@ class AppUser {
       pushToken: data['pushToken'] ?? null,
       role: data['role'] ?? null,
       status: data['status'] ?? null,
+      nationalIdNo: data['nationalIdNo'] ?? null,
+      address: data['address'] ?? null,
     );
   }
 
   toJson() {
     return {
-      "name": name,
-      "userId": userId,
-      "email": email,
-      "phoneNumber": phoneNumber,
-      "countryCode": countryCode,
-      "photoUrl": photoUrl,
-      "dob": dob,
-      "gender": gender,
-      "loginId": loginId,
-      "pushToken": pushToken,
-      "role": role,
-      'status': status,
+      "name": name ?? null,
+      "userId": userId ?? null,
+      "email": email ?? null,
+      "phoneNumber": phoneNumber ?? null,
+      "countryCode": countryCode ?? null,
+      "photoUrl": photoUrl ?? null,
+      "dob": dob ?? null,
+      "gender": gender ?? null,
+      "loginId": loginId ?? null,
+      "pushToken": pushToken ?? null,
+      "role": role ?? null,
+      'status': status ?? null,
+      'nationalIdNo': nationalIdNo ?? null,
+      'address': address ?? null,
     };
   }
 

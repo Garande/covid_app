@@ -10,4 +10,12 @@ class MovementsRepository {
 
   Future<List<UserMovement>> fetchUserMovements(String userId) =>
       _movementsProvider.fetchUserMovements(userId);
+
+  Future<List<UserMovement>> fetchUserMovementsForRange(
+          {String userId, DateTime dateTimeFrom, DateTime dateTimeTo}) =>
+      _movementsProvider.fetchUserMovementsBetween(
+        userId,
+        dateTimeFrom,
+        dateTimeTo,
+      );
 }

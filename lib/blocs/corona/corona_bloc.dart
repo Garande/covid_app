@@ -83,7 +83,7 @@ class CoronaBloc extends Bloc<CoronaEvent, CoronaState> {
     } on Exception catch (e) {
       throw e;
     } catch (e) {
-      throw e;
+      // throw e;
     }
   }
 

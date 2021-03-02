@@ -12,6 +12,7 @@ class Button extends StatelessWidget {
   final Gradient gradient;
   final Function onTap;
   final BorderRadius borderRadius;
+  final bool isOutlined;
 
   const Button({
     Key key,
@@ -26,6 +27,7 @@ class Button extends StatelessWidget {
     this.gradient,
     this.onTap,
     this.borderRadius = const BorderRadius.all(Radius.circular(7.0)),
+    this.isOutlined = false,
   }) : super(key: key);
 
   @override
@@ -36,18 +38,26 @@ class Button extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-          gradient: new LinearGradient(
-              colors: [
-                AppTheme.getPrimaryColor(),
-                AppTheme.getPrimaryDarkColor(),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
+          gradient: !isOutlined
+              ? new LinearGradient(
+                  colors: [
+                    AppTheme.getPrimaryColor(),
+                    AppTheme.getPrimaryDarkColor(),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp)
+              : null,
           borderRadius: BorderRadius.all(
             Radius.circular(5.0),
           ),
+          border: isOutlined
+              ? Border.all(
+                  color: AppTheme.primaryColor,
+                  width: 2,
+                )
+              : null,
         ),
         child: Material(
           borderRadius: borderRadius,
@@ -67,7 +77,7 @@ class Button extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
-                      color: textColor,
+                      color: !isOutlined ? textColor : AppTheme.primaryColor,
                     ),
                   ),
                 ],
