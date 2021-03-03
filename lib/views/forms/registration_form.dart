@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
+import 'package:covid_app/blocs/movements/movements_bloc.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
 import 'package:covid_app/views/widgets/file_select_modal.dart';
+import 'package:covid_app/views/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +25,8 @@ class _RegistrationFormState extends State<RegistrationForm>
 
   AuthenticationBloc _authenticationBloc;
 
+  MovementsBloc _movementsBloc;
+
   AnimationController _loadingAnimationController;
   Animation _loadingAnimation;
   bool isLoading = false;
@@ -30,6 +34,7 @@ class _RegistrationFormState extends State<RegistrationForm>
   @override
   void initState() {
     _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _movementsBloc = MovementsBloc();
     _loadingAnimationController = AnimationController(
       vsync: this,
       duration: Duration(
@@ -111,9 +116,10 @@ class _RegistrationFormState extends State<RegistrationForm>
           child: Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (BuildContext context, AuthenticationState state) {
-          if (state is ProfileUpdateInProgress) {
+      body: BlocListener(
+        cubit: _movementsBloc,
+        listener: (BuildContext context, MovementsState state) {
+          if (state is UploadingProfile) {
             Scaffold.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -129,21 +135,57 @@ class _RegistrationFormState extends State<RegistrationForm>
               );
             setState(() {
               isLoading = true;
+              _loadingAnimationController.forward();
             });
-            _loadingAnimationController.forward();
           }
 
-          if (state is ProfileComplete) {
+          if (state is UploadException) {
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: AppTheme.dangerColor,
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(state.message),
+                      Icon(Icons.error),
+                    ],
+                  ),
+                ),
+              );
             if (_loadingAnimationController.isCompleted)
               _loadingAnimationController.reverse();
             isLoading = false;
-            Navigator.pop(context);
+            setState(() {});
+          }
+
+          if (state is ProfileUpdateComplete) {
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: AppTheme.successColor,
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Profile updated successfuly'),
+                      Icon(Icons.error),
+                    ],
+                  ),
+                ),
+              );
+            if (_loadingAnimationController.isCompleted)
+              _loadingAnimationController.reverse();
+            isLoading = false;
+            setState(() {});
+            // Navigator.pop(context);
           }
         },
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Padding(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   // mainAxisSize: MainAxisSize.min,
@@ -153,26 +195,26 @@ class _RegistrationFormState extends State<RegistrationForm>
                   ],
                 ),
               ),
-              isLoading
-                  ? AnimatedBuilder(
-                      animation: _loadingAnimation,
-                      builder: (_, __) {
-                        return IgnorePointer(
-                          ignoring: _loadingAnimation.value == 0,
-                          child: Container(
-                            color: Colors.black.withOpacity(
-                              _loadingAnimation.value * 0.5,
-                            ),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
+            ),
+            isLoading
+                ? AnimatedBuilder(
+                    animation: _loadingAnimation,
+                    builder: (_, __) {
+                      return IgnorePointer(
+                        ignoring: _loadingAnimation.value == 0,
+                        child: Container(
+                          color: Colors.black.withOpacity(
+                            _loadingAnimation.value * 0.5,
                           ),
-                        );
-                      },
-                    )
-                  : Container(),
-            ],
-          ),
+                          child: Center(
+                            child: LoadingIndicator(),
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : Container(),
+          ],
         ),
       ),
     );
@@ -322,8 +364,7 @@ class _RegistrationFormState extends State<RegistrationForm>
                         appUser.nationalIdNo = ninController.text;
                         appUser.address = addressController.text;
                         appUser.gender = select;
-                        _authenticationBloc
-                            .add(SaveUserProfile(image, appUser));
+                        _movementsBloc.add(UpdateProfile(image, appUser));
                       },
                     ),
                   ],

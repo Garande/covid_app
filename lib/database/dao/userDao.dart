@@ -14,6 +14,8 @@ class UserDao extends BaseDao<AppUser> {
   String _loginIdField = "loginId";
   String _phoneField = "phoneNumber";
   String _countryCodeField = "countryCode";
+  String _nationalIdField = "nationalIdNo";
+  String _addressField = "address";
   String _dobField = "dob";
   String _genderField = "gender";
   String _pushTokenField = "pushToken";
@@ -36,7 +38,9 @@ class UserDao extends BaseDao<AppUser> {
         "$_genderField TEXT, "
         "$_pushTokenField TEXT, "
         "$_roleField TEXT, "
-        "$_statusField TEXT "
+        "$_statusField TEXT, "
+        "$_nationalIdField TEXT, "
+        "$_addressField TEXT "
         ")");
     return null;
   }
@@ -126,6 +130,8 @@ class UserDao extends BaseDao<AppUser> {
   Future<bool> isExist(String id) async {
     final db = await databaseProvider.database;
 
+    // dropTable(db);
+
     List<Map<String, dynamic>> result;
     result = await db
         .query(_tableName, where: '$_userIdField = ?', whereArgs: ["$id"]);
@@ -161,7 +167,10 @@ class UserDao extends BaseDao<AppUser> {
   }
 
   @override
-  Future<int> saveToLocalDb(AppUser object) {
+  Future<int> saveToLocalDb(AppUser object) async {
+    final db = await databaseProvider.database;
+
+    // dropTable(db);
     return DBHelper.saveToLocalDb(
       id: object.userId,
       table: _tableName,

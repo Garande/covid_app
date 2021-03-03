@@ -1,3 +1,4 @@
+import 'package:covid_app/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -11,6 +12,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               height: 20,
@@ -20,15 +23,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
               width: 146,
               height: 146,
             ),
-            // Padding(
-            //   padding:
-            //   const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-            //   child: Text(
-            //     AppContent.loginToAccessHistory,
-            //     style: CustomTheme.displayTextOne,
-            //     textAlign: TextAlign.center,
-            //   ),
-            // ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+              child: Text(
+                'No content found',
+                style: AppTheme.displayTextOne,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ));
   }

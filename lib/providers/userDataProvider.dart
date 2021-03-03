@@ -47,12 +47,8 @@ class UserDataProvider extends BaseUserDataProvider {
     docReference.set(userData, SetOptions(merge: true));
     final DocumentSnapshot currentDocument = await docReference.get();
     AppUser userObject = AppUser.fromFirestore(currentDocument);
-    bool isSavedInLocalDb = await userDao.isExist(userId);
-    if (isSavedInLocalDb) {
-      await userDao.update(userObject);
-    } else {
-      await userDao.insert(userObject);
-    }
+
+    await userDao.saveToLocalDb(userObject);
     return userObject;
   }
 

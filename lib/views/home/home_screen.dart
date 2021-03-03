@@ -3,6 +3,7 @@ import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/views/board/barcode_scan_screen.dart';
+import 'package:covid_app/views/history/history_screen.dart';
 import 'package:covid_app/views/widgets/card_button.dart';
 import 'package:covid_app/views/widgets/card_main.dart';
 import 'package:covid_app/views/widgets/counter.dart';
@@ -119,6 +120,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ],
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  new MaterialPageRoute(
+                                    builder: (context) => HistoryScreen(),
+                                  ),
+                                );
+                              },
                             )
                           ],
                         ),
