@@ -1,9 +1,13 @@
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:covid_app/background_main.dart';
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
+import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/repositories/authenticationRepository.dart';
 import 'package:covid_app/repositories/storageRepository.dart';
 import 'package:covid_app/repositories/userRepository.dart';
+import 'package:covid_app/services/location_service.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/views/drawer/navigation_home_screen.dart';
 import 'package:covid_app/views/welcome/get_started.dart';
@@ -13,6 +17,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class SimpleBlocObserver extends BlocObserver {
   @override
@@ -71,9 +76,31 @@ void main() async {
       ),
     ),
   );
+
+  var channel =
+      const MethodChannel('tech.garande.covid_app/background_service');
+  var callbackHandle = PluginUtilities.getCallbackHandle(backgroundMain);
+  channel.invokeMethod('startService', callbackHandle.toRawHandle());
+
+  LocationService().listenToUserLocation();
 }
 
 class MyApp extends StatelessWidget {
+  var _androidAppRetain = MethodChannel("android_app_retain");
+
+  Future<bool> onBackPress(BuildContext context) {
+    if (Platform.isAndroid) {
+      if (Navigator.of(context).canPop()) {
+        return Future.value(true);
+      } else {
+        _androidAppRetain.invokeMethod("sendToBackground");
+        return Future.value(false);
+      }
+    } else {
+      return Future.value(true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -85,37 +112,50 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.grey,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MaterialApp(
-      title: 'COVID',
-      debugShowCheckedModeBanner: false,
-      // themeMode: ThemeMode.dark,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: AppTheme.fontName,
-        // textTheme: new TextTheme(),
-        // platform: TargetPlatform.iOS,
-      ),
-      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is UnAuthenticated) {
-            // return NavigationHomeScreen();
-            return GetStarted();
-          } else if (state is UnAuthenticated ||
-              state is GoogleAuthenticated ||
-              state is OtpExceptionState ||
-              state is AuthExceptionState ||
-              state is OtpSentState ||
-              state is Authenticated ||
-              state is ProfileUpdateInProgress ||
-              state is PreFillData) {
-            // return NavigationHomeScreen();
-            return SignInScreen(); //Sigin in with phone index 1
-          } else if (state is ProfileUpdated) {
-            return NavigationHomeScreen();
-          } else {
-            return SplashScreen();
-          }
-        },
+
+    return MultiProvider(
+      providers: [
+        StreamProvider<UserMovement>(
+          create: (_) => LocationService().locationStream,
+        )
+      ],
+      child: MaterialApp(
+        title: 'Covid Contact Tracker',
+        debugShowCheckedModeBanner: false,
+        // themeMode: ThemeMode.dark,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          fontFamily: AppTheme.fontName,
+          // textTheme: new TextTheme(),
+          // platform: TargetPlatform.iOS,
+        ),
+        home: WillPopScope(
+          onWillPop: () {
+            return onBackPress(context);
+          },
+          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              if (state is UnAuthenticated) {
+                // return NavigationHomeScreen();
+                return GetStarted();
+              } else if (state is UnAuthenticated ||
+                  state is GoogleAuthenticated ||
+                  state is OtpExceptionState ||
+                  state is AuthExceptionState ||
+                  state is OtpSentState ||
+                  state is Authenticated ||
+                  state is ProfileUpdateInProgress ||
+                  state is PreFillData) {
+                // return NavigationHomeScreen();
+                return SignInScreen(); //Sigin in with phone index 1
+              } else if (state is ProfileUpdated) {
+                return NavigationHomeScreen();
+              } else {
+                return SplashScreen();
+              }
+            },
+          ),
+        ),
       ),
     );
   }
