@@ -168,7 +168,7 @@ class UserDao extends BaseDao<AppUser> {
 
   @override
   Future<int> saveToLocalDb(AppUser object) async {
-    final db = await databaseProvider.database;
+    // final db = await databaseProvider.database;
 
     // dropTable(db);
     return DBHelper.saveToLocalDb(

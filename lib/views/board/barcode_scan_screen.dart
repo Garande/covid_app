@@ -4,7 +4,7 @@ import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
 import 'package:flutter/material.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+// import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -107,11 +107,11 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                     text: 'Scan to Pair',
                     onTap: () async {
                       // if ÷ {
-                      ScanResult result = await BarcodeScanner.scan(
-                          options: ScanOptions(
-                        autoEnableFlash: true,
-                      ));
-                      String data = result.rawContent;
+                      // ScanResult result = await BarcodeScanner.scan(
+                      //     options: ScanOptions(
+                      //   autoEnableFlash: true,
+                      // ));
+                      // String data = result.rawContent;
                     },
                   ),
                   // SizedBox(
@@ -122,9 +122,15 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                     text: 'Enter code to Pair',
                     onTap: () {
                       showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        backgroundColor: Color(0xFFFDFDFD),
                         context: context,
-                        backgroundColor: Colors.transparent,
-                        enableDrag: true,
+                        isScrollControlled: true,
                         builder: (context) => CodeScreenModal(
                           codeEditController: codeController,
                         ),
@@ -157,13 +163,6 @@ class CodeScreenModal extends StatelessWidget {
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 14, horizontal: 26),
-        decoration: BoxDecoration(
-          color: Color(0xFFFDFDFD),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -189,7 +188,8 @@ class CodeScreenModal extends StatelessWidget {
             Container(
               height: MediaQuery.of(context).viewInsets.bottom + 100,
               padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,

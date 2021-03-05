@@ -5,13 +5,16 @@ import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/driver.dart';
 import 'package:covid_app/models/user_movement.dart';
+import 'package:covid_app/models/vehicle_type.dart';
 import 'package:covid_app/providers/provider.dart';
 import 'package:covid_app/utils/Paths.dart';
+// import 'package:google_maps_webservice/directions.dart';
 // import 'package:firebase_database/firebase_database.dart';
 
 final String movementsCollectionsPath = '';
 final String tripsCollectionsPath = '';
 final String driverCollectionsPath = '';
+final String vehicleTypesCollectionsPaths = '';
 
 class MovementsProvider extends BaseMovementsProvider {
   @override
@@ -126,5 +129,27 @@ class MovementsProvider extends BaseMovementsProvider {
 
   void listen(AppUser appUser) {
     // StreamSubscription subscription = FirebaseDatabase.instance.reference().child('/trips/${appUser.userId}').onChildAdded.listen((e) => e.snapshot.value)
+  }
+
+  @override
+  Future<VehicleType> fetchVehicleTypeById(String id) {
+    // VehicleType.bus
+    return Paths.firestoreDb
+        .collection(vehicleTypesCollectionsPaths)
+        .doc(id)
+        .get()
+        .then(
+          (snapshot) => VehicleType.fromJson(snapshot.data()),
+        );
+  }
+
+  @override
+  Future<List<VehicleType>> fetchVehicleTypes() {
+    return Paths.firestoreDb
+        .collection(vehicleTypesCollectionsPaths)
+        .get()
+        .then((snapshot) => snapshot.docs
+            .map((doc) => VehicleType.fromJson(doc.data()))
+            .toList());
   }
 }

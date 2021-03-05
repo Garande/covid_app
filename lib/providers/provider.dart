@@ -5,6 +5,7 @@ import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/driver.dart';
 import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/user_movement.dart';
+import 'package:covid_app/models/vehicle_type.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class BaseAuthenticationProvider {
@@ -63,6 +64,10 @@ abstract class BaseMovementsProvider {
   Future<Trip> fetchTripInfo(String driverId, String userId);
 
   Future<Trip> fetchTripFromId(String id);
+
+  Future<List<VehicleType>> fetchVehicleTypes();
+
+  Future<VehicleType> fetchVehicleTypeById(String id);
 
   // Future<void> updateTripDestination(Address address, )
 }

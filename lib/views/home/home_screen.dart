@@ -1,8 +1,10 @@
+import 'package:async/async.dart';
 import 'package:covid_app/blocs/corona/corona_bloc.dart';
 import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/views/board/barcode_scan_screen.dart';
+import 'package:covid_app/views/forms/driver_registration_form.dart';
 import 'package:covid_app/views/history/history_screen.dart';
 import 'package:covid_app/views/widgets/card_button.dart';
 import 'package:covid_app/views/widgets/card_main.dart';
@@ -48,6 +50,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   bool hasFetched = false;
+
+  AsyncMemoizer _memoizer = AsyncMemoizer<CoronaTotalCount>();
+
+  Future<CoronaTotalCount> fetchTotalCount() {
+    return _memoizer.runOnce(() => _coronaBloc.fetchAllTotalCount());
+  }
 
   // llkl
 
@@ -138,21 +146,65 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
 
             FutureBuilder<CoronaTotalCount>(
-                future: _coronaBloc.fetchAllTotalCount(),
+                future: fetchTotalCount(),
                 builder: (context, snapshot) {
                   hasFetched = false;
-                  CoronaTotalCount coronaTotalCount = CoronaTotalCount(
-                      confirmed: 1445556, deaths: 9889449, recovered: 323233);
-                  if (snapshot.hasData) {
-                    coronaTotalCount = snapshot.data;
-                    hasFetched = true;
+                  CoronaTotalCount coronaTotalCount;
+                  // if (snapshot.hasData) {
+                  coronaTotalCount = snapshot.data;
+                  hasFetched = true;
+                  // }
+                  if (coronaTotalCount == null) {
+                    coronaTotalCount = CoronaTotalCount(
+                        confirmed: 1445556, deaths: 9889449, recovered: 323233);
                   }
+
                   return Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 20,
                     ),
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          child: Card(
+                            // color: AppTheme.lightPurple,
+                            shadowColor: AppTheme.primaryColor,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                highlightColor: Colors.transparent,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                      builder: (context) =>
+                                          DriverRegistrationForm(),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Register your Ride',
+                                      style:
+                                          AppTheme.textFieldTitlePrimaryColored,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           children: [
                             RichText(
