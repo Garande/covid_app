@@ -3,12 +3,19 @@ import 'dart:ui';
 
 import 'package:covid_app/background_main.dart';
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
+import 'package:covid_app/blocs/movements/movements_bloc.dart';
+import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/trip.dart';
+import 'package:covid_app/models/trip_summary.dart';
 import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/repositories/authenticationRepository.dart';
+import 'package:covid_app/repositories/movementsRepository.dart';
 import 'package:covid_app/repositories/storageRepository.dart';
 import 'package:covid_app/repositories/userRepository.dart';
 import 'package:covid_app/services/location_service.dart';
 import 'package:covid_app/utils/app_theme.dart';
+import 'package:covid_app/utils/helper.dart';
+import 'package:covid_app/views/board/trip_screen.dart';
 import 'package:covid_app/views/drawer/navigation_home_screen.dart';
 import 'package:covid_app/views/welcome/get_started.dart';
 import 'package:covid_app/views/welcome/sign_in.dart';
@@ -56,6 +63,7 @@ void main() async {
       AuthenticationRepository();
   final UserDataRepository userDataRepository = UserDataRepository();
   final StorageRepository storageRepository = StorageRepository();
+  MovementsRepository movementsRepository = MovementsRepository();
 
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
@@ -71,6 +79,14 @@ void main() async {
                 storageRepository: storageRepository)
               ..add(AppLaunched()),
           ),
+          BlocProvider<MovementsBloc>(
+            create: (context) => MovementsBloc(
+              authenticationRepository,
+              userDataRepository,
+              storageRepository,
+              movementsRepository,
+            )..add(ListenToTrips()),
+          ),
         ],
         child: MyApp(),
       ),
@@ -85,7 +101,27 @@ void main() async {
   LocationService().listenToUserLocation();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  MovementsBloc _movementsBloc;
+
+  AppUser appUser;
+
+  @override
+  void initState() {
+    _movementsBloc = BlocProvider.of<MovementsBloc>(context);
+    fetchUser();
+    super.initState();
+  }
+
+  void fetchUser() async {
+    appUser = await _movementsBloc.getCurrentUser();
+  }
+
   var _androidAppRetain = MethodChannel("android_app_retain");
 
   Future<bool> onBackPress(BuildContext context) {
@@ -149,7 +185,36 @@ class MyApp extends StatelessWidget {
                 // return NavigationHomeScreen();
                 return SignInScreen(); //Sigin in with phone index 1
               } else if (state is ProfileUpdated) {
-                return NavigationHomeScreen();
+                return StreamBuilder(
+                    stream: _movementsBloc.getLiveEvents(appUser),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        Trip trip = Trip.fromJson(snapshot.data);
+                        AppUser peerUser;
+                        // if (trip.driverId != appUser.userId) {
+                        //   peerUser = await userDataRepository
+                        //       .getUserByUserId(trip.driverId);
+                        // } else {
+                        //   peerUser = await userDataRepository
+                        //       .getUserByUserId(trip.userId);
+                        // }
+
+                        TripSummary tripSummary =
+                            new TripSummary(appUser, peerUser, trip);
+                        printLog(tripSummary);
+
+                        return TripScreen(
+                          tripSummary: tripSummary,
+                        );
+                      }
+
+                      // if (state is TripInProgress)
+                      //   return TripScreen(
+                      //     tripSummary: state.tripSummary,
+                      //   );
+                      // else if (state is TripTransition) return SplashScreen();
+                      return NavigationHomeScreen();
+                    });
               } else {
                 return SplashScreen();
               }

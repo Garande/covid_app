@@ -23,3 +23,8 @@ class UpdateDriver extends MovementsEvent {
   @override
   List<Object> get props => [appUser, driver];
 }
+
+class ListenToTrips extends MovementsEvent {
+  @override
+  List<Object> get props => [];
+}

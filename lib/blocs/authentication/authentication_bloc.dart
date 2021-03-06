@@ -267,7 +267,7 @@ class AuthenticationBloc
   }
 
   Future<AppUser> getCurrentUser() async {
-    User firebaseUser = await authenticationRepository.getCurrentUser();
+    User firebaseUser = authenticationRepository.getCurrentUser();
     if (firebaseUser != null) {
       AppUser user =
           await userDataRepository.getUserByLoginId(firebaseUser.uid);

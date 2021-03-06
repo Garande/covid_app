@@ -35,3 +35,25 @@ class UploadException extends MovementsState {
   @override
   List<Object> get props => [message];
 }
+
+class TripInProgress extends MovementsState {
+  final TripSummary tripSummary;
+
+  TripInProgress(this.tripSummary);
+
+  @override
+  List<Object> get props => [this.tripSummary];
+}
+
+class OffTrip extends MovementsState {
+  final TripSummary tripSummary;
+
+  OffTrip(this.tripSummary);
+  @override
+  List<Object> get props => [this.tripSummary];
+}
+
+class TripTransition extends MovementsState {
+  @override
+  List<Object> get props => [];
+}

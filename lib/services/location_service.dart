@@ -2,11 +2,14 @@
 
 import 'dart:async';
 
-import 'package:covid_app/blocs/movements/movements_bloc.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/user_movement.dart';
+import 'package:covid_app/repositories/authenticationRepository.dart';
+import 'package:covid_app/repositories/movementsRepository.dart';
+import 'package:covid_app/repositories/userRepository.dart';
 import 'package:covid_app/utils/Paths.dart';
 import 'package:covid_app/utils/helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
 
@@ -19,7 +22,13 @@ class LocationService {
 
   Location location = Location();
 
-  MovementsBloc _movementsBloc = MovementsBloc();
+  MovementsRepository movementsRepository = MovementsRepository();
+  AuthenticationRepository authenticationRepository =
+      AuthenticationRepository();
+
+  UserDataRepository userDataRepository = UserDataRepository();
+
+  // MovementsBloc _movementsBloc = MovementsBloc();
 
   AppUser appUser;
 
@@ -30,9 +39,21 @@ class LocationService {
 
   Stream<UserMovement> get locationStream => _locationController.stream;
 
-  void listenToUserLocation() {
+  Future<AppUser> getCurrentUser() async {
+    User firebaseUser = authenticationRepository.getCurrentUser();
+    if (firebaseUser != null) {
+      AppUser user =
+          await userDataRepository.getUserByLoginId(firebaseUser.uid);
+      return user;
+    }
+    return null;
+  }
+
+  void listenToUserLocation() async {
+    appUser = await getCurrentUser();
+
     location.onLocationChanged.listen((locationData) async {
-      printLog('Listening to location changes');
+      // printLog('Listening to location changes');
       double distanceInMeters;
       if (previousLocationData != null) {
         final Distance distance = new Distance();
@@ -66,12 +87,14 @@ class LocationService {
 
         // Save location data
         if (distanceInMeters != null) {
-          if (distanceInMeters >= 100.0) {
-            _movementsBloc.saveUserMovement(movement);
+          if (distanceInMeters >= 10.0) {
+            movementsRepository.saveUserMovement(movement);
           }
         } else {
-          _movementsBloc.saveUserMovement(movement);
+          movementsRepository.saveUserMovement(movement);
         }
+
+        previousLocationData = movement;
       }
     });
   }

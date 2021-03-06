@@ -4,19 +4,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/driver.dart';
+import 'package:covid_app/models/trip_summary.dart';
 import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/models/vehicle_type.dart';
 import 'package:covid_app/providers/provider.dart';
+import 'package:covid_app/providers/userDataProvider.dart';
 import 'package:covid_app/utils/Paths.dart';
+import 'package:firebase_database/firebase_database.dart';
 // import 'package:google_maps_webservice/directions.dart';
 // import 'package:firebase_database/firebase_database.dart';
 
-final String movementsCollectionsPath = '';
-final String tripsCollectionsPath = '';
+final String movementsCollectionsPath = '/MAIN/ACTIVITIES/USER_MOVEMENTS';
+final String tripsCollectionsPath = '/MAIN/ACTIVITIES/TRIPS';
 final String driverCollectionsPath = '';
 final String vehicleTypesCollectionsPaths = '/SYSTEM/MAIN/vehicleTypes';
+final String onGoingTripsPath = '/MAIN/ACTIVITIES/ONGOING_TRIPS/users';
 
 class MovementsProvider extends BaseMovementsProvider {
+  BaseUserDataProvider _userDataProvider = UserDataProvider();
   @override
   Future<UserMovement> fetchUserLastMovement(String userId) {
     // TODO: implement fetchUserLastMovement
@@ -151,5 +156,48 @@ class MovementsProvider extends BaseMovementsProvider {
         .then((snapshot) => snapshot.docs
             .map((doc) => VehicleType.fromJson(doc.data()))
             .toList());
+  }
+
+  @override
+  StreamSubscription<Event> listenToStartTrip(AppUser appUser) {
+    DatabaseReference databaseReference = FirebaseDatabase.instance
+        .reference()
+        .child('onGoingTrips/users/${appUser.userId}');
+    return databaseReference.onChildAdded.listen((Event event) async {
+      var data = event.snapshot.value;
+      Trip trip = Trip.fromJson(data);
+      AppUser peerUser;
+      if (trip.driverId != appUser.userId) {
+        peerUser = await _userDataProvider.getUserByUserId(trip.driverId);
+      } else {
+        peerUser = await _userDataProvider.getUserByUserId(trip.userId);
+      }
+
+      TripSummary tripSummary = new TripSummary(appUser, peerUser, trip);
+
+      return tripSummary;
+    });
+  }
+
+  @override
+  StreamSubscription<Event> listenToEndTrip(AppUser appUser) {
+    DatabaseReference databaseReference = FirebaseDatabase.instance
+        .reference()
+        .child('onGoingTrips/users/${appUser.userId}');
+
+    return databaseReference.onChildRemoved.listen((Event event) async {
+      var data = event.snapshot.value;
+      Trip trip = Trip.fromJson(data);
+      AppUser peerUser;
+      if (trip.driverId != appUser.userId) {
+        peerUser = await _userDataProvider.getUserByUserId(trip.driverId);
+      } else {
+        peerUser = await _userDataProvider.getUserByUserId(trip.userId);
+      }
+
+      TripSummary tripSummary = new TripSummary(appUser, peerUser, trip);
+
+      return tripSummary;
+    });
   }
 }

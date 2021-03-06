@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:covid_app/models/address.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/driver.dart';
 import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/models/vehicle_type.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 abstract class BaseAuthenticationProvider {
   Future<User> signInWithGoogle();
@@ -37,6 +38,8 @@ abstract class BaseUserDataProvider {
       String userId, Map<String, dynamic> userData);
 
   Future<void> saveDriver(Driver driver);
+
+  Future<Driver> fetchDriverById(String userId);
   // Future<bool> isUserProfileExist(
   //     String loginId); //loginId = uid from firebaseUser;
 }
@@ -71,5 +74,8 @@ abstract class BaseMovementsProvider {
 
   Future<VehicleType> fetchVehicleTypeById(String id);
 
+  StreamSubscription<Event> listenToStartTrip(AppUser appUser);
+
+  StreamSubscription<Event> listenToEndTrip(AppUser appUser);
   // Future<void> updateTripDestination(Address address, )
 }

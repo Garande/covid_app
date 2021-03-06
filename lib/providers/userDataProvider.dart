@@ -69,4 +69,13 @@ class UserDataProvider extends BaseUserDataProvider {
         .doc(driver.userId)
         .set(driver.toJson(), SetOptions(merge: true));
   }
+
+  @override
+  Future<Driver> fetchDriverById(String userId) {
+    return Paths.firestoreDb
+        .collection(driversPaths)
+        .doc(userId)
+        .get()
+        .then((doc) => Driver.fromJson(doc.data()));
+  }
 }

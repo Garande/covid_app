@@ -43,4 +43,7 @@ class UserDataRepository {
       userDataProvider.getUserByUserId(userId);
 
   Future<void> saveDriver(Driver driver) => userDataProvider.saveDriver(driver);
+
+  Future<Driver> fetchDriverById(String userId) =>
+      userDataProvider.fetchDriverById(userId);
 }

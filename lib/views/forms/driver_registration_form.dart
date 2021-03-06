@@ -44,7 +44,7 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
   @override
   void initState() {
     _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _movementsBloc = MovementsBloc();
+    _movementsBloc = BlocProvider.of<MovementsBloc>(context);
     _loadingAnimationController = AnimationController(
       vsync: this,
       duration: Duration(
@@ -70,7 +70,15 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
 
   void fetchUser() async {
     appUser = await _authenticationBloc.getCurrentUser();
-    setState(() {});
+    Driver driver = await _movementsBloc.fetchDriverForId(appUser.userId);
+
+    setState(() {
+      if (driver != null) {
+        permitController.text = driver.permitNo;
+        plateController.text = driver.plateNumber;
+        selectedValue = driver.vehicleType;
+      }
+    });
     // populateFields();
   }
 
@@ -85,7 +93,6 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
 
   @override
   void dispose() {
-    _movementsBloc?.close();
     super.dispose();
   }
 

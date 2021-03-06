@@ -34,7 +34,7 @@ class _RegistrationFormState extends State<RegistrationForm>
   @override
   void initState() {
     _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _movementsBloc = MovementsBloc();
+    _movementsBloc = BlocProvider.of<MovementsBloc>(context);
     _loadingAnimationController = AnimationController(
       vsync: this,
       duration: Duration(

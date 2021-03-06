@@ -11,6 +11,7 @@ import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/utils/map_helper.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class UserMovementMap extends StatefulWidget {
@@ -46,7 +47,7 @@ class _UserMovementMapState extends State<UserMovementMap> {
 
   LatLng initialLatLng = LatLng(0.3470375, 32.6159797);
 
-  MovementsBloc _movementsBloc = MovementsBloc();
+  MovementsBloc _movementsBloc;
 
   BitmapDescriptor mapMarkerIcon;
 
@@ -54,12 +55,12 @@ class _UserMovementMapState extends State<UserMovementMap> {
 
   @override
   void initState() {
+    _movementsBloc = BlocProvider.of<MovementsBloc>(context);
     super.initState();
   }
 
   @override
   void dispose() {
-    _movementsBloc.close();
     super.dispose();
   }
 

@@ -1,17 +1,21 @@
 import 'package:async/async.dart';
+import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
 import 'package:covid_app/blocs/corona/corona_bloc.dart';
+import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/views/board/barcode_scan_screen.dart';
 import 'package:covid_app/views/forms/driver_registration_form.dart';
 import 'package:covid_app/views/history/history_screen.dart';
+import 'package:covid_app/views/widgets/button.dart';
 import 'package:covid_app/views/widgets/card_button.dart';
 import 'package:covid_app/views/widgets/card_main.dart';
 import 'package:covid_app/views/widgets/counter.dart';
 import 'package:covid_app/views/widgets/custom_clipper.dart';
 import 'package:covid_app/views/widgets/page_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,11 +27,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   double offset = 0;
 
   CoronaBloc _coronaBloc;
+  AuthenticationBloc _authenticationBloc;
+
+  AppUser appUser;
   // CoronaTotalCount coronaTotalCount;
 
   @override
   void initState() {
     _coronaBloc = CoronaBloc();
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     fetchData();
     super.initState();
     controller.addListener(onScroll);
@@ -46,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   fetchData() async {
+    appUser = await _authenticationBloc.getCurrentUser();
     // coronaTotalCount = await _coronaBloc.fetchAllTotalCount();
   }
 
@@ -168,40 +177,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         SizedBox(
                           height: 10,
                         ),
-                        Container(
-                          height: 50,
-                          width: double.infinity,
-                          child: Card(
-                            // color: AppTheme.lightPurple,
-                            shadowColor: AppTheme.primaryColor,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                highlightColor: Colors.transparent,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (context) =>
-                                          DriverRegistrationForm(),
-                                    ),
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Register your Ride',
-                                      style:
-                                          AppTheme.textFieldTitlePrimaryColored,
-                                    ),
-                                  ],
+                        if (appUser == null || appUser.role == null)
+                          Button(
+                            text: 'Register your Ride',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (context) =>
+                                      DriverRegistrationForm(),
                                 ),
-                              ),
+                              );
+                            },
+                            paddingInsets: EdgeInsets.symmetric(
+                              horizontal: 0,
+                              vertical: 0,
                             ),
                           ),
-                        ),
                         SizedBox(
                           height: 10,
                         ),

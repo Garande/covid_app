@@ -16,19 +16,19 @@ class _GetStartedState extends State<GetStarted> {
 
   List introContent = [
     {
-      "title": "Welcome To",
-      "image": "assets/images/getStartedImages/intro_slide_one.png",
-      "desc": "Start or join a video meeting on the go"
+      "title": "Hands",
+      "image": "assets/images/getStartedImages/wash_hands.jpeg",
+      "desc": "Wash your hands regularly"
     },
     {
-      "title": "Message Your Team",
-      "image": "assets/images/getStartedImages/intro_slide_one.png",
-      "desc": "Send text, voice message and share file"
+      "title": "Distance",
+      "image": "assets/images/getStartedImages/social_distance.png",
+      "desc": "Always Observe social distance"
     },
     {
-      "title": "Get MeetAiring",
-      "image": "assets/images/getStartedImages/intro_slide_one.png",
-      "desc": "Work anywhere, with anyone, one any device"
+      "title": "Mask",
+      "image": "assets/images/getStartedImages/do-wear-mask.jpeg",
+      "desc": "Wear your mask properly and regularly"
     }
   ];
 
@@ -112,18 +112,18 @@ class _GetStartedState extends State<GetStarted> {
                     child: Image.asset(
                   currentSlide.pathImage,
                   width: 200.0,
-                  height: 200.0,
+                  // height: 200.0,
                   fit: BoxFit.contain,
                 )),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 20.0, right: 20.0, top: 30.0),
-                child: Button(
-                  text: 'Get Started',
-                  onTap: () {},
-                ),
-              )
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.only(left: 20.0, right: 20.0, top: 30.0),
+              //   child: Button(
+              //     text: 'Get Started',
+              //     onTap: () {},
+              //   ),
+              // )
             ],
           ),
         ),
