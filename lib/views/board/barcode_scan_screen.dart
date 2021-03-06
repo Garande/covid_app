@@ -1,11 +1,19 @@
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
+import 'package:covid_app/blocs/movements/movements_bloc.dart';
+import 'package:covid_app/models/address.dart';
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/trip.dart';
+import 'package:covid_app/utils/Paths.dart';
 import 'package:covid_app/utils/app_theme.dart';
+import 'package:covid_app/utils/constants.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class BarcodeScanScreen extends StatefulWidget {
@@ -25,6 +33,9 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
 
   AuthenticationBloc _authenticationBloc;
   TextEditingController codeController;
+  MovementsBloc _movementsBloc;
+
+  Location location = Location();
 
   void fetchUser() async {
     appUser = await _authenticationBloc.getCurrentUser();
@@ -34,6 +45,8 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
   @override
   void initState() {
     _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _movementsBloc = BlocProvider.of<MovementsBloc>(context);
+
     if (widget.appUser != null) {
       appUser = widget.appUser;
     } else
@@ -44,6 +57,36 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<LocationData> getLatestUserLocation() async {
+    var _userLocation = await location.getLocation();
+    return _userLocation;
+  }
+
+  void startTrip(String userId) async {
+    AppUser peerUser = await _authenticationBloc.getUserByUserId(userId);
+
+    LocationData myLocation = await getLatestUserLocation();
+    if (peerUser != null) {
+      Trip trip = new Trip();
+      trip.userId = appUser.userId;
+      trip.peerId = peerUser.userId;
+      trip.creationDateTimeMillis = new DateTime.now().millisecondsSinceEpoch;
+      trip.lastUpdateDateTimeMillis = new DateTime.now().millisecondsSinceEpoch;
+      trip.status = TripStatus.ON_TRIP;
+      trip.addressFrom = Address(
+        latitude: myLocation.latitude,
+        longitude: myLocation.longitude,
+        accuracy: myLocation.accuracy,
+        creationDateTimeMillis: new DateTime.now().millisecondsSinceEpoch,
+      );
+
+      trip.id = Paths.generateFirestoreDbKey([trip.userId, trip.peerId, 'TRIP'],
+          new DateTime.now().millisecondsSinceEpoch);
+
+      _movementsBloc.startTrip(trip);
+    }
   }
 
   @override
@@ -106,12 +149,11 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                   Button(
                     text: 'Scan to Pair',
                     onTap: () async {
-                      // if ÷ {
-                      // ScanResult result = await BarcodeScanner.scan(
-                      //     options: ScanOptions(
-                      //   autoEnableFlash: true,
-                      // ));
-                      // String data = result.rawContent;
+                      String barcodeScanRes =
+                          await FlutterBarcodeScanner.scanBarcode(
+                              "#ff6666", 'Cancel', true, ScanMode.DEFAULT);
+
+                      startTrip(barcodeScanRes);
                     },
                   ),
                   // SizedBox(
@@ -133,6 +175,9 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                         isScrollControlled: true,
                         builder: (context) => CodeScreenModal(
                           codeEditController: codeController,
+                          onPair: () {
+                            startTrip(codeController.text);
+                          },
                         ),
                       );
                     },

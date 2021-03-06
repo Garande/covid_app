@@ -62,7 +62,7 @@ class LocationService {
         LatLng loc2 = new LatLng(locationData.latitude, locationData.longitude);
 
         distanceInMeters = distance(loc1, loc2);
-        printLog(distanceInMeters);
+        // printLog(distanceInMeters);
       }
 
       int timestamp = new DateTime.now().millisecondsSinceEpoch;

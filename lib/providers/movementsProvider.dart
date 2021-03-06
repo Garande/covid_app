@@ -18,7 +18,7 @@ final String movementsCollectionsPath = '/MAIN/ACTIVITIES/USER_MOVEMENTS';
 final String tripsCollectionsPath = '/MAIN/ACTIVITIES/TRIPS';
 final String driverCollectionsPath = '';
 final String vehicleTypesCollectionsPaths = '/SYSTEM/MAIN/vehicleTypes';
-final String onGoingTripsPath = '/MAIN/ACTIVITIES/ONGOING_TRIPS/users';
+final String onGoingTripsPath = 'onGoingTrips/users';
 
 class MovementsProvider extends BaseMovementsProvider {
   BaseUserDataProvider _userDataProvider = UserDataProvider();
@@ -167,8 +167,8 @@ class MovementsProvider extends BaseMovementsProvider {
       var data = event.snapshot.value;
       Trip trip = Trip.fromJson(data);
       AppUser peerUser;
-      if (trip.driverId != appUser.userId) {
-        peerUser = await _userDataProvider.getUserByUserId(trip.driverId);
+      if (trip.peerId != appUser.userId) {
+        peerUser = await _userDataProvider.getUserByUserId(trip.peerId);
       } else {
         peerUser = await _userDataProvider.getUserByUserId(trip.userId);
       }
@@ -189,8 +189,8 @@ class MovementsProvider extends BaseMovementsProvider {
       var data = event.snapshot.value;
       Trip trip = Trip.fromJson(data);
       AppUser peerUser;
-      if (trip.driverId != appUser.userId) {
-        peerUser = await _userDataProvider.getUserByUserId(trip.driverId);
+      if (trip.peerId != appUser.userId) {
+        peerUser = await _userDataProvider.getUserByUserId(trip.peerId);
       } else {
         peerUser = await _userDataProvider.getUserByUserId(trip.userId);
       }
@@ -199,5 +199,57 @@ class MovementsProvider extends BaseMovementsProvider {
 
       return tripSummary;
     });
+  }
+
+  @override
+  Future<void> endTrip(Trip trip) async {
+    await Paths.firestoreDb
+        .collection(tripsCollectionsPath)
+        .doc(trip.id)
+        .set(trip.toJson(), SetOptions(merge: true));
+
+    /// notifify driver
+    if (trip.peerId != null) {
+      await FirebaseDatabase.instance
+          .reference()
+          .child(onGoingTripsPath + "/" + trip.peerId)
+          .child(trip.id)
+          .remove();
+    }
+
+    /// notifify user
+    if (trip.userId != null) {
+      await FirebaseDatabase.instance
+          .reference()
+          .child(onGoingTripsPath + "/" + trip.userId)
+          .child(trip.id)
+          .remove();
+    }
+  }
+
+  @override
+  Future<void> startTrip(Trip trip) async {
+    await Paths.firestoreDb
+        .collection(tripsCollectionsPath)
+        .doc(trip.id)
+        .set(trip.toJson(), SetOptions(merge: true));
+
+    /// notifify driver
+    if (trip.peerId != null) {
+      await FirebaseDatabase.instance
+          .reference()
+          .child(onGoingTripsPath + "/" + trip.peerId)
+          .child(trip.id)
+          .set(trip.toJson());
+    }
+
+    /// notifify user
+    if (trip.userId != null) {
+      await FirebaseDatabase.instance
+          .reference()
+          .child(onGoingTripsPath + "/" + trip.userId)
+          .child(trip.id)
+          .set(trip.toJson());
+    }
   }
 }

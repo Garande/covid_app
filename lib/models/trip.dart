@@ -1,17 +1,17 @@
 import 'package:covid_app/models/address.dart';
 
 class Trip {
-  final String id;
-  final String userId;
-  final String driverId;
-  final int creationDateTimeMillis;
-  final int lastUpdateDateTimeMillis;
-  final String status;
-  final String passengerNationalIdNo;
-  final String passengerName;
-  final String passengerPhoneNumber;
-  final Address addressFrom;
-  final Address addressTo;
+  String id;
+  String userId;
+  String peerId;
+  int creationDateTimeMillis;
+  int lastUpdateDateTimeMillis;
+  String status;
+  String passengerNationalIdNo;
+  String passengerName;
+  String passengerPhoneNumber;
+  Address addressFrom;
+  Address addressTo;
 
   Trip({
     this.id,
@@ -24,10 +24,10 @@ class Trip {
     this.passengerPhoneNumber,
     this.addressFrom,
     this.addressTo,
-    this.driverId,
+    this.peerId,
   });
 
-  factory Trip.fromJson(Map<String, dynamic> data) {
+  factory Trip.fromJson(var data) {
     if (data == null) return null;
 
     return Trip(
@@ -41,7 +41,7 @@ class Trip {
       passengerPhoneNumber: data['passengerPhoneNumber'] ?? null,
       addressFrom: Address.fromJson(data['addressFrom']) ?? null,
       addressTo: Address.fromJson(data['addressTo']) ?? null,
-      driverId: data['driverId'] ?? null,
+      peerId: data['peerId'] ?? null,
     );
   }
 
@@ -55,9 +55,11 @@ class Trip {
       'passengerNationalIdNo': this.passengerNationalIdNo ?? null,
       'passengerName': this.passengerName ?? null,
       'passengerPhoneNumber': this.passengerPhoneNumber ?? null,
-      'addressFrom': this.addressFrom.toJson() ?? null,
-      'addressTo': this.addressTo.toJson() ?? null,
-      'driverId': this.driverId ?? null,
+      'addressFrom':
+          this.addressFrom != null ? this.addressFrom.toJson() ?? null : null,
+      'addressTo':
+          this.addressTo != null ? this.addressTo.toJson() ?? null : null,
+      'peerId': this.peerId ?? null,
     };
   }
 }

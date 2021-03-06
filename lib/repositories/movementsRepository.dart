@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/models/vehicle_type.dart';
 import 'package:covid_app/providers/movementsProvider.dart';
@@ -35,4 +36,8 @@ class MovementsRepository {
 
   StreamSubscription<Event> listenToEndTrip(AppUser appUser) =>
       _movementsProvider.listenToEndTrip(appUser);
+
+  Future<void> startTrip(Trip trip) => _movementsProvider.startTrip(trip);
+
+  Future<void> endTrip(Trip trip) => _movementsProvider.endTrip(trip);
 }

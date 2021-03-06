@@ -192,12 +192,12 @@ class SignInScreenState extends State<SignInScreen>
                 ),
               );
 
-            _tabController.animateTo(_tabController.index + 1);
+            // _tabController.animateTo(_tabController.index + 1);
           }
 
           if (state is PreFillData) {
             AppUser user = state.user;
-            populateFields(user);
+            // populateFields(user);
             completeUserProfile();
             // _tabController.animateTo(2);
           }
@@ -632,5 +632,12 @@ class SignInScreenState extends State<SignInScreen>
 
     BlocProvider.of<AuthenticationBloc>(context)
         .add(SaveUserProfile(null, currentUser));
+
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => NavigationHomeScreen(),
+      ),
+    );
   }
 }

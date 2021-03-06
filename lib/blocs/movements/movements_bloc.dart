@@ -132,7 +132,7 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
           .reference()
           .child('onGoingTrips/users/${appUser.userId}');
 
-      return databaseReference.onChildAdded;
+      return databaseReference.onValue;
     }
     return null;
   }
@@ -148,8 +148,8 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
         var data = event.snapshot.value;
         Trip trip = Trip.fromJson(data);
         AppUser peerUser;
-        if (trip.driverId != appUser.userId) {
-          peerUser = await userDataRepository.getUserByUserId(trip.driverId);
+        if (trip.peerId != appUser.userId) {
+          peerUser = await userDataRepository.getUserByUserId(trip.peerId);
         } else {
           peerUser = await userDataRepository.getUserByUserId(trip.userId);
         }
@@ -172,8 +172,8 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
         var data = event.snapshot.value;
         Trip trip = Trip.fromJson(data);
         AppUser peerUser;
-        if (trip.driverId != appUser.userId) {
-          peerUser = await userDataRepository.getUserByUserId(trip.driverId);
+        if (trip.peerId != appUser.userId) {
+          peerUser = await userDataRepository.getUserByUserId(trip.peerId);
         } else {
           peerUser = await userDataRepository.getUserByUserId(trip.userId);
         }
@@ -186,5 +186,13 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
         yield OffTrip(tripSummary);
       });
     }
+  }
+
+  Future<void> endTrip(Trip trip) {
+    return movementsRepository.endTrip(trip);
+  }
+
+  Future<void> startTrip(Trip trip) {
+    return movementsRepository.startTrip(trip);
   }
 }

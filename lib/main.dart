@@ -187,33 +187,44 @@ class _MyAppState extends State<MyApp> {
               } else if (state is ProfileUpdated) {
                 return StreamBuilder(
                     stream: _movementsBloc.getLiveEvents(appUser),
-                    builder: (context, snapshot) {
+                    builder: (context, AsyncSnapshot<dynamic> snapshot) {
                       if (snapshot.hasData && snapshot.data != null) {
-                        Trip trip = Trip.fromJson(snapshot.data);
-                        AppUser peerUser;
-                        // if (trip.driverId != appUser.userId) {
-                        //   peerUser = await userDataRepository
-                        //       .getUserByUserId(trip.driverId);
-                        // } else {
-                        //   peerUser = await userDataRepository
-                        //       .getUserByUserId(trip.userId);
-                        // }
+                        var data = snapshot.data.snapshot.value;
+                        List<TripSummary> items = [];
+                        if (data != null) {
+                          data.forEach((key, item) {
+                            printLog(item);
+                            Trip trip = Trip.fromJson(item);
+                            AppUser peerUser;
+                            // if (trip.driverId != appUser.userId) {
+                            //   peerUser = await userDataRepository
+                            //       .getUserByUserId(trip.driverId);
+                            // } else {
+                            //   peerUser = await userDataRepository
+                            //       .getUserByUserId(trip.userId);
+                            // }
 
-                        TripSummary tripSummary =
-                            new TripSummary(appUser, peerUser, trip);
-                        printLog(tripSummary);
+                            TripSummary tripSummary =
+                                new TripSummary(appUser, peerUser, trip);
+                            items.add(tripSummary);
+                            // printLog(tripSummary);
+                          });
+                        }
 
-                        return TripScreen(
-                          tripSummary: tripSummary,
-                        );
+                        if (items.length > 0) {
+                          printLog(items[0].trip.userId);
+                          return TripScreen(tripSummaries: items
+                              // tripSummary: tripSummary,
+                              );
+                        }
+                        return NavigationHomeScreen();
                       }
-
+                      return NavigationHomeScreen();
                       // if (state is TripInProgress)
                       //   return TripScreen(
                       //     tripSummary: state.tripSummary,
                       //   );
                       // else if (state is TripTransition) return SplashScreen();
-                      return NavigationHomeScreen();
                     });
               } else {
                 return SplashScreen();

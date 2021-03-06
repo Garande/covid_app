@@ -77,5 +77,9 @@ abstract class BaseMovementsProvider {
   StreamSubscription<Event> listenToStartTrip(AppUser appUser);
 
   StreamSubscription<Event> listenToEndTrip(AppUser appUser);
+
+  Future<void> startTrip(Trip trip);
+
+  Future<void> endTrip(Trip trip);
   // Future<void> updateTripDestination(Address address, )
 }

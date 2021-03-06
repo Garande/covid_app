@@ -14,3 +14,8 @@ class TransactionTypes {
   static const String CASH_IN = 'CASH_IN';
   static const String CASH_OUT = 'CASH_OUT';
 }
+
+class TripStatus {
+  static const String ON_TRIP = 'ON_TRIP';
+  static const String ENDED_TRIP = 'ENDED_TRIP';
+}
