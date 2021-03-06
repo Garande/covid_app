@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:covid_app/database/dao/userDao.dart';
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/driver.dart';
 import 'package:covid_app/providers/provider.dart';
 import 'package:covid_app/utils/Paths.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+const String driversPaths = '/drivers';
 
 class UserDataProvider extends BaseUserDataProvider {
   final firestoreDb = FirebaseFirestore.instance;
@@ -57,5 +60,13 @@ class UserDataProvider extends BaseUserDataProvider {
     return Paths.retrieveUserDbPath(userId)
         .get()
         .then((doc) => AppUser.fromFirestore(doc));
+  }
+
+  @override
+  Future<void> saveDriver(Driver driver) {
+    return Paths.firestoreDb
+        .collection(driversPaths)
+        .doc(driver.userId)
+        .set(driver.toJson(), SetOptions(merge: true));
   }
 }

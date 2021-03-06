@@ -1,8 +1,7 @@
 class AccountTypes {
-  static const String STUDENT = 'LEARNER';
-  static const String TEACHER = 'TEACHER';
-  static const String PARENT = 'PARENT';
-  static const String PUBLISHER = 'PUBLISHER';
+  static const String ADMIN = 'ADMIN';
+
+  static const String DRIVER = 'DRIVER';
 }
 
 class ContentTypes {

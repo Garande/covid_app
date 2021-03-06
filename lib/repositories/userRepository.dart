@@ -1,5 +1,6 @@
 import 'package:covid_app/database/dao/userDao.dart';
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/driver.dart';
 import 'package:covid_app/providers/provider.dart';
 import 'package:covid_app/providers/userDataProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,4 +41,6 @@ class UserDataRepository {
 
   Future<AppUser> getUserByUserId(String userId) =>
       userDataProvider.getUserByUserId(userId);
+
+  Future<void> saveDriver(Driver driver) => userDataProvider.saveDriver(driver);
 }

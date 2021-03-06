@@ -393,6 +393,7 @@ class AppWidgets {
     TextAlign textAlign = TextAlign.left,
     FocusNode focusNode,
     bool autofocus = false,
+    bool enabled = true,
   }) {
     return TextFormField(
       maxLines: maxLines,
@@ -423,6 +424,52 @@ class AppWidgets {
       textAlign: textAlign,
       focusNode: focusNode,
       autofocus: autofocus,
+      enabled: enabled,
+    );
+  }
+
+  Widget getDropdownField({
+    String hintValue = "",
+    EdgeInsetsGeometry contentPadding =
+        const EdgeInsets.symmetric(horizontal: 15),
+    Widget prefixWidget,
+    Widget suffixWidget,
+    TextStyle style,
+    List<DropdownMenuItem<dynamic>> items,
+    Function(dynamic value) onChanged,
+    dynamic value,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.fromBorderSide(
+          BorderSide(color: AppTheme.lightColor, width: 1.0),
+        ),
+        color: Colors.transparent,
+      ),
+      padding: contentPadding,
+      child: Row(
+        children: [
+          prefixWidget,
+          prefixWidget != null
+              ? SizedBox(
+                  width: 10,
+                )
+              : Container(),
+          Expanded(
+            child: DropdownButton<dynamic>(
+              isExpanded: true,
+              value: value,
+              hint: Text(
+                hintValue,
+                style: style,
+              ),
+              items: items,
+              onChanged: onChanged,
+              underline: Container(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

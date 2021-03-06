@@ -119,7 +119,7 @@ class _RegistrationFormState extends State<RegistrationForm>
       body: BlocListener(
         cubit: _movementsBloc,
         listener: (BuildContext context, MovementsState state) {
-          if (state is UploadingProfile) {
+          if (state is Uploading) {
             Scaffold.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -160,7 +160,7 @@ class _RegistrationFormState extends State<RegistrationForm>
             setState(() {});
           }
 
-          if (state is ProfileUpdateComplete) {
+          if (state is UploadComplete) {
             Scaffold.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(

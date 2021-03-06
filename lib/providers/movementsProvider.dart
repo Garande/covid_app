@@ -14,7 +14,7 @@ import 'package:covid_app/utils/Paths.dart';
 final String movementsCollectionsPath = '';
 final String tripsCollectionsPath = '';
 final String driverCollectionsPath = '';
-final String vehicleTypesCollectionsPaths = '';
+final String vehicleTypesCollectionsPaths = '/SYSTEM/MAIN/vehicleTypes';
 
 class MovementsProvider extends BaseMovementsProvider {
   @override

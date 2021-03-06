@@ -9,17 +9,17 @@ class MovementsInitial extends MovementsState {
   List<Object> get props => [];
 }
 
-class UploadingProfile extends MovementsState {
+class Uploading extends MovementsState {
   @override
-  String toString() => 'UploadingProfile';
+  String toString() => 'Uploading';
 
   @override
   List<Object> get props => [];
 }
 
-class ProfileUpdateComplete extends MovementsState {
+class UploadComplete extends MovementsState {
   @override
-  String toString() => 'ProfileUpdateComplete';
+  String toString() => 'UploadComplete';
 
   @override
   List<Object> get props => [];

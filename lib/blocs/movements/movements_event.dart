@@ -14,3 +14,12 @@ class UpdateProfile extends MovementsEvent {
   @override
   List<Object> get props => [profileImage, user];
 }
+
+class UpdateDriver extends MovementsEvent {
+  final AppUser appUser;
+  final Driver driver;
+
+  UpdateDriver(this.appUser, this.driver);
+  @override
+  List<Object> get props => [appUser, driver];
+}

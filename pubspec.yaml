@@ -36,6 +36,7 @@ dependencies:
   firebase_database: ^6.0.0
   firebase_storage: ^7.0.0
   fluster: ^1.1.2
+  flutter_barcode_scanner: ^1.0.2
   flutter_bloc: ^6.1.2
   flutter_google_places: ^0.2.6
   flutter_spinkit: ^4.1.2+1

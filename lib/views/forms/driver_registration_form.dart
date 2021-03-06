@@ -1,14 +1,19 @@
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
 import 'package:covid_app/blocs/movements/movements_bloc.dart';
 import 'package:covid_app/models/appUser.dart';
+import 'package:covid_app/models/driver.dart';
 import 'package:covid_app/utils/app_theme.dart';
+import 'package:covid_app/utils/constants.dart';
+import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
 import 'package:covid_app/views/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:covid_app/models/vehicle_type.dart';
 
 class DriverRegistrationForm extends StatefulWidget {
   final AppUser appUser;
@@ -20,9 +25,9 @@ class DriverRegistrationForm extends StatefulWidget {
 
 class _DriverRegistrationFormState extends State<DriverRegistrationForm>
     with SingleTickerProviderStateMixin {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController ninController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  TextEditingController permitController = TextEditingController();
+  TextEditingController plateController = TextEditingController();
+  // TextEditingController addressController = TextEditingController();
 
   AuthenticationBloc _authenticationBloc;
 
@@ -31,6 +36,10 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
   AnimationController _loadingAnimationController;
   Animation _loadingAnimation;
   bool isLoading = false;
+
+  List<VehicleType> _vehicleTypes = [];
+
+  dynamic selectedValue = null;
 
   @override
   void initState() {
@@ -55,6 +64,8 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
       // populateFields();
     } else
       fetchUser();
+
+    // fetchVehicleTypes();
   }
 
   void fetchUser() async {
@@ -63,8 +74,20 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
     // populateFields();
   }
 
+  AsyncMemoizer _memoizer = AsyncMemoizer<List<VehicleType>>();
+
+  Future<List<VehicleType>> fetchVehicleTypes() {
+    return _memoizer.runOnce(() => _movementsBloc.fetchVehicleTypes());
+  }
+
   AppUser appUser;
   File image;
+
+  @override
+  void dispose() {
+    _movementsBloc?.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,28 +102,95 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
           child: Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: Stack(
-        children: [
-          _buildForm(context),
-          isLoading
-              ? AnimatedBuilder(
-                  animation: _loadingAnimation,
-                  builder: (_, __) {
-                    return IgnorePointer(
-                      ignoring: _loadingAnimation.value == 0,
-                      child: Container(
-                        color: Colors.black.withOpacity(
-                          _loadingAnimation.value * 0.5,
+      body: BlocListener(
+        cubit: _movementsBloc,
+        listener: (BuildContext context, MovementsState state) {
+          if (state is Uploading) {
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Uploading...'),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              );
+            setState(() {
+              isLoading = true;
+              _loadingAnimationController.forward();
+            });
+          }
+
+          if (state is UploadException) {
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: AppTheme.dangerColor,
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(state.message),
+                      Icon(Icons.error),
+                    ],
+                  ),
+                ),
+              );
+            if (_loadingAnimationController.isCompleted)
+              _loadingAnimationController.reverse();
+            isLoading = false;
+            setState(() {});
+          }
+
+          if (state is UploadComplete) {
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: AppTheme.successColor,
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Profile updated successfuly'),
+                      Icon(Icons.error),
+                    ],
+                  ),
+                ),
+              );
+            if (_loadingAnimationController.isCompleted)
+              _loadingAnimationController.reverse();
+            isLoading = false;
+            setState(() {});
+            Navigator.pop(context);
+          }
+        },
+        child: Stack(
+          children: [
+            _buildForm(context),
+            isLoading
+                ? AnimatedBuilder(
+                    animation: _loadingAnimation,
+                    builder: (_, __) {
+                      return IgnorePointer(
+                        ignoring: _loadingAnimation.value == 0,
+                        child: Container(
+                          color: Colors.black.withOpacity(
+                            _loadingAnimation.value * 0.5,
+                          ),
+                          child: Center(
+                            child: LoadingIndicator(),
+                          ),
                         ),
-                        child: Center(
-                          child: LoadingIndicator(),
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : Container(),
-        ],
+                      );
+                    },
+                  )
+                : Container(),
+          ],
+        ),
       ),
     );
   }
@@ -139,8 +229,8 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
                         // ),
                         AppWidgets().getCustomEditTextField(
                           keyboardType: TextInputType.emailAddress,
-                          controller: nameController,
-                          hintValue: 'Name',
+                          controller: permitController,
+                          hintValue: 'Permit No',
                           prefixWidget: Padding(
                             padding: const EdgeInsets.only(left: 9),
                             child: Image.asset(
@@ -153,8 +243,8 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
                         SizedBox(height: 25.0),
                         AppWidgets().getCustomEditTextField(
                           keyboardType: TextInputType.emailAddress,
-                          controller: ninController,
-                          hintValue: 'National Id No. (NIN)',
+                          controller: plateController,
+                          hintValue: 'Plate Number',
                           prefixWidget: Padding(
                             padding: const EdgeInsets.only(left: 9),
                             child: Image.asset(
@@ -165,19 +255,60 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
                           style: AppTheme.textFieldTitlePrimaryColored,
                         ),
                         SizedBox(height: 25.0),
-                        AppWidgets().getCustomEditTextField(
-                          keyboardType: TextInputType.emailAddress,
-                          hintValue: 'Address',
-                          controller: addressController,
-                          prefixWidget: Padding(
-                            padding: const EdgeInsets.only(left: 9),
-                            child: Image.asset(
-                              'assets/images/icons/person.png',
-                              scale: 3,
-                            ),
-                          ),
-                          style: AppTheme.textFieldTitlePrimaryColored,
+
+                        FutureBuilder<List<VehicleType>>(
+                          future: fetchVehicleTypes(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                              return Container(
+                                height: 40,
+                                width: MediaQuery.of(context).size.width,
+                                child: Center(
+                                  child: LoadingIndicator(),
+                                ),
+                              );
+                            }
+
+                            if (!snapshot.hasData || snapshot.hasError) {
+                              return Container();
+                            }
+
+                            _vehicleTypes = snapshot.data;
+
+                            printLog(_vehicleTypes[0].label);
+
+                            return AppWidgets().getDropdownField(
+                              hintValue: 'Vehicle Type',
+                              value: selectedValue,
+                              prefixWidget: Padding(
+                                padding: const EdgeInsets.only(left: 9),
+                                child: Image.asset(
+                                  'assets/images/icons/person.png',
+                                  scale: 3,
+                                ),
+                              ),
+                              onChanged: (data) {
+                                setState(() {
+                                  selectedValue = data;
+                                });
+                              },
+                              items: snapshot.data.map((vehicleType) {
+                                return new DropdownMenuItem<String>(
+                                  value: vehicleType.id,
+                                  child: new Text(
+                                    vehicleType.label,
+                                    style:
+                                        AppTheme.textFieldTitlePrimaryColored,
+                                  ),
+                                );
+                              }).toList(),
+                              style: AppTheme.textFieldTitlePrimaryColored,
+                            );
+                          },
                         ),
+
                         SizedBox(height: 14.0),
                         Button(
                           paddingInsets: EdgeInsets.symmetric(
@@ -185,11 +316,18 @@ class _DriverRegistrationFormState extends State<DriverRegistrationForm>
                           ),
                           text: 'Save',
                           onTap: () {
-                            // appUser.name = nameController.text;
-                            // appUser.nationalIdNo = ninController.text;
-                            // appUser.address = addressController.text;
-                            // appUser.gender = select;
-                            // _movementsBloc.add(UpdateProfile(image, appUser));
+                            Driver driver = new Driver();
+                            driver.userId = appUser.userId;
+                            driver.permitNo = permitController.text;
+                            driver.permitUrl = null;
+                            driver.plateNumber = plateController.text;
+                            driver.vehicleOnBoardCount = 0;
+                            driver.vehicleType = selectedValue;
+                            appUser.role = AccountTypes.DRIVER;
+
+                            _movementsBloc.add(UpdateDriver(appUser, driver));
+                            // _movementsBloc.saveDriverProfile();
+                            // _authenticationBloc.saveUserProfile(appUser);
                           },
                         ),
                       ],

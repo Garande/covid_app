@@ -35,6 +35,8 @@ abstract class BaseUserDataProvider {
 
   Future<AppUser> updateUserDetails(
       String userId, Map<String, dynamic> userData);
+
+  Future<void> saveDriver(Driver driver);
   // Future<bool> isUserProfileExist(
   //     String loginId); //loginId = uid from firebaseUser;
 }

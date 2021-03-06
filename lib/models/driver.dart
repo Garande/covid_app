@@ -1,12 +1,12 @@
 class Driver {
-  final String userId;
-  final String vehicleType;
-  final String permitNo;
-  final String permitUrl;
-  final String plateNumber;
-  final String status;
-  final String vehicleStatus;
-  final String vehicleOnBoardCount;
+  String userId;
+  String vehicleType;
+  String permitNo;
+  String permitUrl;
+  String plateNumber;
+  String status;
+  String vehicleStatus;
+  int vehicleOnBoardCount;
 
   Driver({
     this.userId,
