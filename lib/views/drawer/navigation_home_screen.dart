@@ -1,10 +1,9 @@
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/views/drawer/drawer_user_controller.dart';
-import 'package:covid_app/views/drawer/feedback_screen.dart';
 import 'package:covid_app/views/drawer/home_drawer.dart';
-import 'package:covid_app/views/forms/registration_form.dart';
 import 'package:covid_app/views/home/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:covid_app/views/admin/admin_home_screen.dart';
 
 import 'help_screen.dart';
 
@@ -59,9 +58,9 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         setState(() {
           screenView = HelpScreen();
         });
-      } else if (drawerIndex == DrawerIndex.FeedBack) {
+      } else if (drawerIndex == DrawerIndex.ADMIN) {
         setState(() {
-          screenView = FeedbackScreen();
+          screenView = AdminHomeScreen();
         });
       } else if (drawerIndex == DrawerIndex.Invite) {
         // setState(() {

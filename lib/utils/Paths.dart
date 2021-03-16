@@ -12,8 +12,7 @@ class Paths {
   static const String usersPath = '/users';
 
   //image paths
-  static const String appLogoPath = 'assets/images/logo.png';
-  static const String yellowBirdLogoPath = 'assets/images/yb_logo2.png';
+  static const String appLogoPath = 'assets/images/COA.png';
 
   static final firestoreDb = FirebaseFirestore.instance;
 

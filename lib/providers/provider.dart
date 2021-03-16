@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/driver.dart';
+import 'package:covid_app/models/question.dart';
 import 'package:covid_app/models/trip.dart';
 import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/models/vehicle_type.dart';
@@ -40,8 +41,14 @@ abstract class BaseUserDataProvider {
   Future<void> saveDriver(Driver driver);
 
   Future<Driver> fetchDriverById(String userId);
+
+  searchUser(String query) {}
   // Future<bool> isUserProfileExist(
   //     String loginId); //loginId = uid from firebaseUser;
+}
+
+abstract class BaseCoronaProvider {
+  Future<List<Question>> fetchSelfTestQuestions();
 }
 
 abstract class BaseStorageProvider {
@@ -81,5 +88,7 @@ abstract class BaseMovementsProvider {
   Future<void> startTrip(Trip trip);
 
   Future<void> endTrip(Trip trip);
+
+  Future<List<AppUser>> searchUser(String query);
   // Future<void> updateTripDestination(Address address, )
 }

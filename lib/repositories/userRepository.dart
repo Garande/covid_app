@@ -46,4 +46,7 @@ class UserDataRepository {
 
   Future<Driver> fetchDriverById(String userId) =>
       userDataProvider.fetchDriverById(userId);
+
+  Future<List<AppUser>> searchUser(String query) =>
+      userDataProvider.searchUser(query);
 }

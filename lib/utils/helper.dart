@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:algolia/algolia.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -43,4 +44,11 @@ printLog(dynamic data) {
   if (ENABLE_PRINT_LOG) {
     print("$TAG${data.toString()}");
   }
+}
+
+class AlgoliaKeys {
+  static final Algolia algolia = Algolia.init(
+    applicationId: '9IJQX7ANYL',
+    apiKey: '71129391e8e03302f586339b22c2f76a',
+  );
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:algolia/algolia.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/trip.dart';
@@ -10,6 +12,7 @@ import 'package:covid_app/models/vehicle_type.dart';
 import 'package:covid_app/providers/provider.dart';
 import 'package:covid_app/providers/userDataProvider.dart';
 import 'package:covid_app/utils/Paths.dart';
+import 'package:covid_app/utils/helper.dart';
 import 'package:firebase_database/firebase_database.dart';
 // import 'package:google_maps_webservice/directions.dart';
 // import 'package:firebase_database/firebase_database.dart';
@@ -251,5 +254,30 @@ class MovementsProvider extends BaseMovementsProvider {
           .child(trip.id)
           .set(trip.toJson());
     }
+  }
+
+  @override
+  Future<List<AppUser>> searchUser(String searchText) async {
+    Algolia algolia = AlgoliaKeys.algolia;
+    AlgoliaQuery query =
+        algolia.instance.index('schools').search(searchText).setHitsPerPage(5);
+
+    AlgoliaQuerySnapshot snap = await query.getObjects();
+
+    List<AppUser> results = [];
+    for (AlgoliaObjectSnapshot objectSnapshot in snap.hits) {
+      // print();
+      results.add(
+        new AppUser(
+          address: objectSnapshot.data['address'],
+          userId: objectSnapshot.objectID,
+          name: objectSnapshot.data['name'],
+          photoUrl: objectSnapshot.data['photoUrl'],
+          phoneNumber: objectSnapshot.data['phoneNumber'],
+        ),
+      );
+    }
+
+    return results;
   }
 }

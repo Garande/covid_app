@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
 import 'package:covid_app/models/corona_case.dart';
 import 'package:covid_app/models/corona_case_country.dart';
 import 'package:covid_app/models/corona_case_response.dart';
 import 'package:covid_app/models/corona_count_response.dart';
 import 'package:covid_app/models/corona_total_count.dart';
+import 'package:covid_app/models/question.dart';
+import 'package:covid_app/repositories/coronaRepository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -17,6 +18,8 @@ part 'corona_state.dart';
 
 class CoronaBloc extends Bloc<CoronaEvent, CoronaState> {
   CoronaBloc() : super(null);
+
+  CoronaRepository _coronaRepository = CoronaRepository();
 
   @override
   CoronaState get initialState => Uninitialized();
@@ -149,5 +152,9 @@ class CoronaBloc extends Bloc<CoronaEvent, CoronaState> {
     } else {
       throw ServerErrorException("Error retrieving data");
     }
+  }
+
+  Future<List<Question>> fetchSelfTestQuestions() {
+    return _coronaRepository.fetchSelfTestQuestions();
   }
 }

@@ -39,15 +39,17 @@ class Button extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           gradient: !isOutlined
-              ? new LinearGradient(
-                  colors: [
-                    AppTheme.getPrimaryColor(),
-                    AppTheme.getPrimaryDarkColor(),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp)
+              ? gradient != null
+                  ? gradient
+                  : new LinearGradient(
+                      colors: [
+                        AppTheme.getPrimaryColor(),
+                        AppTheme.getPrimaryDarkColor(),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp)
               : null,
           borderRadius: BorderRadius.all(
             Radius.circular(5.0),

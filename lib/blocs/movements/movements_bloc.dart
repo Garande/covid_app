@@ -32,6 +32,10 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
 
   StreamSubscription<Event> onTripStartSubscription;
 
+  final _searchController = StreamController<List<AppUser>>.broadcast();
+
+  get searchResults => _searchController.stream;
+
   MovementsBloc(
     this.authenticationRepository,
     this.userDataRepository,
@@ -49,6 +53,7 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
   dispose() {
     onTripEndSubscription.cancel();
     onTripStartSubscription.cancel();
+    _searchController.close();
   }
 
   @override
@@ -194,5 +199,10 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
 
   Future<void> startTrip(Trip trip) {
     return movementsRepository.startTrip(trip);
+  }
+
+  Future<Stream<List<AppUser>>> searchUser(String query) async {
+    var results = await userDataRepository.searchUser(query);
+    _searchController.sink.add(results);
   }
 }
