@@ -1,7 +1,6 @@
 import 'package:covid_app/blocs/authentication/authentication_bloc.dart';
 import 'package:covid_app/blocs/corona/corona_bloc.dart';
 import 'package:covid_app/models/appUser.dart';
-import 'package:covid_app/models/user_movement.dart';
 import 'package:covid_app/models/user_summary.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/constants.dart';

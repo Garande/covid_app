@@ -5,6 +5,7 @@ import 'package:covid_app/models/appUser.dart';
 import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
+import 'package:covid_app/views/board/barcode_event_scan_screen.dart';
 import 'package:covid_app/views/board/barcode_scan_screen.dart';
 import 'package:covid_app/views/forms/driver_registration_form.dart';
 import 'package:covid_app/views/history/history_screen.dart';
@@ -141,23 +142,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             SizedBox(
                               height: 10,
                             ),
-                            if (appUser == null || appUser.role == null)
-                              Button(
-                                text: 'Register your Ride',
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                      builder: (context) =>
-                                          DriverRegistrationForm(),
-                                    ),
-                                  );
-                                },
-                                paddingInsets: EdgeInsets.symmetric(
-                                  horizontal: 0,
-                                  vertical: 0,
-                                ),
-                              ),
+                            // if (appUser == null || appUser.role == null)
+                            //   Button(
+                            //     text: 'Register your Ride',
+                            //     onTap: () {
+                            //       Navigator.push(
+                            //         context,
+                            //         new MaterialPageRoute(
+                            //           builder: (context) =>
+                            //               DriverRegistrationForm(),
+                            //         ),
+                            //       );
+                            //     },
+                            //     paddingInsets: EdgeInsets.symmetric(
+                            //       horizontal: 0,
+                            //       vertical: 0,
+                            //     ),
+                            //   ),
                             SizedBox(
                               height: 10,
                             ),
@@ -283,9 +284,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               _animationController.reverse();
               Navigator.of(context).push(
                 new MaterialPageRoute(
-                  builder: (context) => BarcodeScanScreen(),
+                  builder: (context) => BarcodeEventScanScreen(),
                 ),
               );
+            },
+          ),
+          FabItem(
+            "Register Event",
+            Icons.add_business,
+            onPress: () {
+              _animationController.reverse();
+              // Navigator.of(context).push(
+              //   new MaterialPageRoute(
+              //     builder: (context) => WelcomeSelfTestScreen(),
+              //   ),
+              // );
             },
           ),
           FabItem(
@@ -301,15 +314,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             },
           ),
           FabItem(
+            "Register Ride",
+            Icons.airport_shuttle_sharp,
+            onPress: () {
+              _animationController.reverse();
+              // Navigator.of(context).push(
+              //   new MaterialPageRoute(
+              //     builder: (context) => WelcomeSelfTestScreen(),
+              //   ),
+              // );
+            },
+          ),
+          FabItem(
             "History",
             Icons.article,
             onPress: () {
               _animationController.reverse();
-              Navigator.of(context).push(
-                new MaterialPageRoute(
-                  builder: (context) => HistoryScreen(),
-                ),
-              );
+              // Navigator.of(context).push(
+              //   new MaterialPageRoute(
+              //     builder: (context) => HistoryScreen(),
+              //   ),
+              // );
             },
           ),
         ],

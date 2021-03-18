@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:algolia/algolia.dart';
+import 'package:covid_app/main.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -34,6 +36,33 @@ class Helper {
   static String formatDateMonth(DateTime dateTime) {
     var dateFormat = new DateFormat.MMMMd();
     return dateFormat.format(dateTime);
+  }
+
+  static Future<void> scheduleAlarm(
+      DateTime dateTime, String title, String description,
+      {String payload}) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'covidContactTracker',
+      'covidContactTracker',
+      'CovidTrackerChannel',
+      icon: 'ic_laucher',
+      // sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
+      largeIcon: DrawableResourceAndroidBitmap('ic_laucher'),
+      playSound: true, enableVibration: true,
+    );
+
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+        sound: 'a_long_cold_sting.wav',
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true);
+
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.schedule(
+        0, title, description, dateTime, platformChannelSpecifics,
+        androidAllowWhileIdle: true, payload: payload);
   }
 }
 

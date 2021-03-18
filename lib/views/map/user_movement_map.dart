@@ -9,6 +9,8 @@ import 'package:covid_app/services/location_service.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/utils/map_helper.dart';
+import 'package:covid_app/views/widgets/app_widget.dart';
+import 'package:covid_app/views/widgets/button.dart';
 import 'package:covid_app/views/widgets/loading_indicator.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
@@ -63,9 +65,24 @@ class _UserMovementMapState extends State<UserMovementMap>
   Animation<double> _animation;
   AnimationController _animationController;
 
+  final String _markerImageUrl =
+      'https://img.icons8.com/office/80/000000/marker.png';
+
+  Future moveCamera(LatLng newLoc) async {
+    final GoogleMapController controller = await _completer.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: newLoc,
+      zoom: 17.0,
+      bearing: 45.0,
+      tilt: 45.0,
+    )));
+  }
+
   @override
   void initState() {
     _movementsBloc = BlocProvider.of<MovementsBloc>(context);
+
+    mapMarkerIcon = BitmapDescriptor.defaultMarker;
 
     _animationController = AnimationController(
       vsync: this,
@@ -78,6 +95,7 @@ class _UserMovementMapState extends State<UserMovementMap>
 
     super.initState();
     isFetchingMovements = true;
+    initializeMapMarkerIcon();
 
     _animationController.forward();
     fetchMovements();
@@ -121,6 +139,7 @@ class _UserMovementMapState extends State<UserMovementMap>
     markers
       ..clear()
       ..addAll(updatedMarkers);
+    setState(() {});
   }
 
   List<MapMarker> _userMarkers;
@@ -141,27 +160,56 @@ class _UserMovementMapState extends State<UserMovementMap>
           .sort((a, b) => a.creationDateTimeMillis - b.creationDateTimeMillis);
       List<MapMarker> _mapMarkers = [];
 
+      printLog('****************************************');
+      printLog(_userMovements.length);
+
       int i = 0;
       _userMovements.forEach((_movement) {
         ++i;
+
+        printLog('#############################');
+        printLog(_movement.latitude);
+
         var random = Random();
-        int rand = random.nextInt(10000000000);
+        int rand = random.nextInt(100000000);
+        printLog(_movement.id);
         _mapMarkers.add(
           MapMarker(
-            icon: mapMarkerIcon,
-            latitude: _movement.latitude,
-            longitude: _movement.longitude,
-            id: rand.toString(),
-            infoWindow: InfoWindow(
-              title: Helper.formatDateWithTime(
-                new DateTime.fromMillisecondsSinceEpoch(
-                    _movement.creationDateTimeMillis),
+              icon: BitmapDescriptor.defaultMarker,
+              latitude: _movement.latitude,
+              longitude: _movement.longitude,
+              id: rand.toString(),
+              infoWindow: InfoWindow(
+                title: Helper.formatDateWithTime(
+                  new DateTime.fromMillisecondsSinceEpoch(
+                      _movement.creationDateTimeMillis),
+                ),
+                snippet: 'A$i',
               ),
-              snippet: 'A$i',
-            ),
-          ),
+              onTap: () {
+                showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                  ),
+                  backgroundColor: Color(0xFFFDFDFD),
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => OnTapUserMovementModal(
+                    userMovement: _movement,
+                    onUpdate: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                );
+              }),
         );
       });
+
+      // printLog('KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK');
+      // printLog(_mapMarkers.length);
 
       _animationController.reverse();
 
@@ -227,6 +275,90 @@ class _UserMovementMapState extends State<UserMovementMap>
           ),
         );
       },
+    );
+  }
+}
+
+class OnTapUserMovementModal extends StatefulWidget {
+  final Function() onUpdate;
+  final UserMovement userMovement;
+  const OnTapUserMovementModal({
+    this.userMovement,
+    Key key,
+    this.onUpdate,
+  }) : super(key: key);
+
+  @override
+  _OnTapUserMovementModalState createState() => _OnTapUserMovementModalState();
+}
+
+class _OnTapUserMovementModalState extends State<OnTapUserMovementModal> {
+  String selectedValue;
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 26),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width * 0.2,
+              height: 3,
+              decoration: ShapeDecoration(
+                shape: StadiumBorder(),
+                color: Color(0xFFF4F5F4),
+              ),
+            ),
+            SizedBox(height: 18),
+            Text(
+              'Select Action',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            // SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 18),
+
+            Container(
+              height: MediaQuery.of(context).viewInsets.bottom + 130,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AppWidgets().getCustomEditTextField(
+                    hintValue: 'Enter Radius to Query',
+                    prefixWidget: Padding(
+                      padding: const EdgeInsets.only(left: 9),
+                      child: Image.asset(
+                        'assets/images/icons/hash.png',
+                        scale: 3,
+                      ),
+                    ),
+                    style: AppTheme.textFieldTitlePrimaryColored,
+                    keyboardType: TextInputType.number,
+                  ),
+                  Button(
+                    text: 'Show nearby users',
+                    onTap: () {
+                      // widget.onUpdate(selectedValue);
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

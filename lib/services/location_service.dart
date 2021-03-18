@@ -79,7 +79,18 @@ class LocationService {
                           CovidResult.SYMPTOMATIC)) {
                 AppUser appUser = await userDataRepository
                     .getUserByUserId(userSummary.userId);
+
+                var test = userSummary.officialCovidTestStatus != null
+                    ? userSummary.officialCovidTestStatus
+                    : userSummary.selfCovidTestStatus;
                 //show Notification
+                Helper.scheduleAlarm(
+                  new DateTime.now(),
+                  'Covid Tracker Alert',
+                  'Covid patient detected, observe SOPs',
+                  payload:
+                      'You are in range with a $test COVID-19  patient; \nName: ${appUser.name}; Observe SOPs',
+                );
               }
               break;
 

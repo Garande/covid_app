@@ -16,9 +16,9 @@
 
     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 
-    <!-- <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/ic_launcher" /> -->
+    <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/ic_launcher" />
 
-    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDRIAwO0ofhDSQ30xtmGxfn4aHGeuMpV7Q" />
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDRlAwO0ofhDSQ30xtmGxfn4aHGeuMpV7Q" />
     <!-- AIzaSyDRIAwO0ofhDSQ3xtmGxfn4aHGeuMpV7Q -->
     <!-- AIzaSyDRIAwO0ofhDSQ30xtmGxfn4aHGeuMpV7Q -->
 

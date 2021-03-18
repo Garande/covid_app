@@ -56,10 +56,12 @@ class MovementsProvider extends BaseMovementsProvider {
     return Paths.firestoreDb
         .collection(movementsCollectionsPath)
         .where('userId', isEqualTo: userId)
+        .orderBy('creationDateTimeMillis', descending: true)
         .where('creationDateTimeMillis',
             isGreaterThanOrEqualTo: dateTimeFrom.millisecondsSinceEpoch)
         .where('creationDateTimeMillis',
             isLessThanOrEqualTo: dateTimeTo.millisecondsSinceEpoch)
+        .limit(100)
         .get()
         .then(
           (snapshot) => snapshot.docs
