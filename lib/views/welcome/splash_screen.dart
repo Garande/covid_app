@@ -53,10 +53,27 @@ class _SplashScreenState extends State<SplashScreen>
         child: FadeTransition(
           opacity: _animation,
           child: Center(
-            child: Image.asset(
-              Paths.appLogoPath,
-              width: 80.0,
-              height: 80.0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  Paths.appLogoPath,
+                  width: 90.0,
+                  height: 90.0,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Covid-19 Contact Tracker',
+                  textAlign: TextAlign.center,
+                  style: AppTheme.titleTextStyle.copyWith(
+                    color: AppTheme.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

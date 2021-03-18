@@ -1,6 +1,7 @@
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/views/widgets/categoryCard.dart';
 import 'package:flutter/material.dart';
+import 'package:covid_app/views/admin/users_screen.dart';
 
 class CategoryList extends StatelessWidget {
   CategoryList({
@@ -29,7 +30,18 @@ class CategoryList extends StatelessWidget {
   }
 
   final List<Category> categories = [
-    Category(name: "Users", color: AppTheme.teal, onPress: (context) {}),
+    Category(
+        name: "Users",
+        color: AppTheme.teal,
+        onPress: (context) {
+          //
+          Navigator.push(
+            context,
+            new MaterialPageRoute(
+              builder: (context) => UsersScreen(),
+            ),
+          );
+        }),
     Category(
       name: "Drivers",
       color: AppTheme.brown,

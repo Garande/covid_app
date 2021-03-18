@@ -7,6 +7,7 @@ import 'package:covid_app/models/corona_case_response.dart';
 import 'package:covid_app/models/corona_count_response.dart';
 import 'package:covid_app/models/corona_total_count.dart';
 import 'package:covid_app/models/question.dart';
+import 'package:covid_app/models/user_summary.dart';
 import 'package:covid_app/repositories/coronaRepository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
@@ -156,5 +157,13 @@ class CoronaBloc extends Bloc<CoronaEvent, CoronaState> {
 
   Future<List<Question>> fetchSelfTestQuestions() {
     return _coronaRepository.fetchSelfTestQuestions();
+  }
+
+  Future<UserSummary> fetchUserSummary(String userId) {
+    return _coronaRepository.fetchUserSummary(userId);
+  }
+
+  Future<void> updateUserSummary(UserSummary userSummary) {
+    return _coronaRepository.updateUserSummary(userSummary);
   }
 }

@@ -113,7 +113,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen>
         ),
         SizedBox(height: screenSize.height * 0.051),
         // ignore: missing_required_param
-        CategoryList(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: CategoryList(),
+          ),
+        ),
       ],
     );
   }

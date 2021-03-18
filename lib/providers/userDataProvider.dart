@@ -78,4 +78,15 @@ class UserDataProvider extends BaseUserDataProvider {
         .get()
         .then((doc) => Driver.fromJson(doc.data()));
   }
+
+  @override
+  Future<List<AppUser>> fetchSystemUsers() {
+    return Paths.firestoreDb.collection('/users').get().then(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => AppUser.fromJson(doc.data()),
+              )
+              .toList(),
+        );
+  }
 }

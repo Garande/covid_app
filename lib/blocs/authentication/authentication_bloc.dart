@@ -276,6 +276,10 @@ class AuthenticationBloc
     return null;
   }
 
+  Future<List<AppUser>> fetchSystemUsers() {
+    return userDataRepository.fetchSystemUsers();
+  }
+
   Future<AppUser> getUserByUserId(String userId) {
     return userDataRepository.getUserByUserId(userId);
   }

@@ -19,3 +19,9 @@ class TripStatus {
   static const String ON_TRIP = 'ON_TRIP';
   static const String ENDED_TRIP = 'ENDED_TRIP';
 }
+
+class CovidResult {
+  static const String POSITIVE = 'POSITIVE';
+  static const String NEGATIVE = 'NEGATIVE';
+  static const String SYMPTOMATIC = 'SYMPTOMATIC';
+}

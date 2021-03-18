@@ -58,7 +58,7 @@ class MovementsProvider extends BaseMovementsProvider {
         .where('userId', isEqualTo: userId)
         .where('creationDateTimeMillis',
             isGreaterThanOrEqualTo: dateTimeFrom.millisecondsSinceEpoch)
-        .where('creationDateTimeMills',
+        .where('creationDateTimeMillis',
             isLessThanOrEqualTo: dateTimeTo.millisecondsSinceEpoch)
         .get()
         .then(

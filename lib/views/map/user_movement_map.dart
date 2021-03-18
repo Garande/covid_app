@@ -9,18 +9,23 @@ import 'package:covid_app/services/location_service.dart';
 import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/helper.dart';
 import 'package:covid_app/utils/map_helper.dart';
+import 'package:covid_app/views/widgets/loading_indicator.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class UserMovementMap extends StatefulWidget {
+  final AppUser appUser;
+
+  const UserMovementMap({Key key, this.appUser}) : super(key: key);
   @override
   _UserMovementMapState createState() => _UserMovementMapState();
 }
 
-class _UserMovementMapState extends State<UserMovementMap> {
-  AppUser appUser;
+class _UserMovementMapState extends State<UserMovementMap>
+    with TickerProviderStateMixin {
+  // AppUser appUser;
   Fluster<MapMarker> fluster;
   Fluster<MapMarker> _clusterManager;
 
@@ -51,12 +56,31 @@ class _UserMovementMapState extends State<UserMovementMap> {
 
   BitmapDescriptor mapMarkerIcon;
 
+  bool isFetchingMovements = false;
+
   Completer<GoogleMapController> _completer = Completer();
+
+  Animation<double> _animation;
+  AnimationController _animationController;
 
   @override
   void initState() {
     _movementsBloc = BlocProvider.of<MovementsBloc>(context);
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 260),
+    );
+
+    final curvedAnimation =
+        CurvedAnimation(curve: Curves.easeInOut, parent: _animationController);
+    _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
+
     super.initState();
+    isFetchingMovements = true;
+
+    _animationController.forward();
+    fetchMovements();
   }
 
   @override
@@ -102,39 +126,58 @@ class _UserMovementMapState extends State<UserMovementMap> {
   List<MapMarker> _userMarkers;
 
   void fetchMovements() async {
-    List<UserMovement> _userMovements =
-        await _movementsBloc.fetchUserMovements(appUser.userId);
-    _userMovements
-        .sort((a, b) => a.creationDateTimeMillis - b.creationDateTimeMillis);
-    List<MapMarker> _mapMarkers = [];
-
-    int i = 0;
-    _userMovements.forEach((_movement) {
-      ++i;
-      var random = Random();
-      int rand = random.nextInt(10000000000);
-      _mapMarkers.add(
-        MapMarker(
-          icon: mapMarkerIcon,
-          latitude: _movement.latitude,
-          longitude: _movement.longitude,
-          id: rand.toString(),
-          infoWindow: InfoWindow(
-            title: Helper.formatDateWithTime(
-              new DateTime.fromMillisecondsSinceEpoch(
-                  _movement.creationDateTimeMillis),
-            ),
-            snippet: 'A$i',
-          ),
-        ),
+    try {
+      DateTime today = new DateTime.now();
+      DateTime lastTwoWeeks = today.subtract(new Duration(days: 14));
+      List<UserMovement> _userMovements =
+          await _movementsBloc.fetchUserMovementsForRange(
+        userId: widget.appUser.userId,
+        dateTime1: lastTwoWeeks,
+        dateTime2: today,
       );
-    });
+      printLog('============================#########============');
+      printLog(_userMovements.length);
+      _userMovements
+          .sort((a, b) => a.creationDateTimeMillis - b.creationDateTimeMillis);
+      List<MapMarker> _mapMarkers = [];
 
-    setState(() {
-      _userMarkers = _mapMarkers;
-    });
+      int i = 0;
+      _userMovements.forEach((_movement) {
+        ++i;
+        var random = Random();
+        int rand = random.nextInt(10000000000);
+        _mapMarkers.add(
+          MapMarker(
+            icon: mapMarkerIcon,
+            latitude: _movement.latitude,
+            longitude: _movement.longitude,
+            id: rand.toString(),
+            infoWindow: InfoWindow(
+              title: Helper.formatDateWithTime(
+                new DateTime.fromMillisecondsSinceEpoch(
+                    _movement.creationDateTimeMillis),
+              ),
+              snippet: 'A$i',
+            ),
+          ),
+        );
+      });
 
-    _initMarkers();
+      _animationController.reverse();
+
+      setState(() {
+        _userMarkers = _mapMarkers;
+        isFetchingMovements = false;
+      });
+
+      _initMarkers();
+    } catch (e) {
+      printLog(e);
+      setState(() {
+        _animationController.reverse();
+        isFetchingMovements = false;
+      });
+    }
   }
 
   @override
@@ -161,8 +204,29 @@ class _UserMovementMapState extends State<UserMovementMap> {
               compassEnabled: true,
             ),
           ),
+          _buildOverlayBackground(),
         ],
       ),
+    );
+  }
+
+  Widget _buildOverlayBackground() {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (_, __) {
+        return IgnorePointer(
+          ignoring: _animation.value == 0,
+          child: InkWell(
+            onTap: () => _animationController.reverse(),
+            child: Container(
+              color: Colors.black.withOpacity(_animation.value * 0.5),
+              child: Center(
+                child: isFetchingMovements ? LoadingIndicator() : Container(),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

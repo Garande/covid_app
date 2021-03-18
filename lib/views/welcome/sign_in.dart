@@ -203,7 +203,7 @@ class SignInScreenState extends State<SignInScreen>
           }
 
           if (state is ProfileComplete) {
-            if (_tabController.index == 2) {
+            if (_tabController.index == 1) {
               //Navigate to home screen
               Navigator.pushReplacement(
                 context,

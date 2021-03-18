@@ -52,7 +52,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       ),
       DrawerList(
         index: DrawerIndex.ADMIN,
-        labelName: 'Admin Home',
+        labelName: 'Admin',
         icon: Icon(Icons.admin_panel_settings),
       ),
       DrawerList(
@@ -60,6 +60,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: 'Help',
         isAssetsImage: true,
         imageName: 'assets/images/supportIcon.png',
+      ),
+      DrawerList(
+        index: DrawerIndex.Legal,
+        labelName: 'Privacy Policy',
+        isAssetsImage: true,
+        // icon: Icon(Icons.priva),
+        imageName: 'assets/images/legal.png',
       ),
       // DrawerList(
       //   index: DrawerIndex.FeedBack,
@@ -350,6 +357,7 @@ enum DrawerIndex {
   HOME,
   ADMIN,
   FeedBack,
+  Legal,
   Help,
   Share,
   Settings,

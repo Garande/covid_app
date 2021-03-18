@@ -8,6 +8,7 @@ import 'package:covid_app/utils/app_theme.dart';
 import 'package:covid_app/utils/constants.dart';
 import 'package:covid_app/views/widgets/app_widget.dart';
 import 'package:covid_app/views/widgets/button.dart';
+import 'package:covid_app/views/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
@@ -116,12 +117,14 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                   SizedBox(
                     height: 20,
                   ),
-                  QrImage(
-                    size: 200,
-                    data: appUser.userId,
-                    // foregroundColor: AppTheme.primaryColor,
-                    version: QrVersions.auto,
-                  ),
+                  appUser != null
+                      ? QrImage(
+                          size: 200,
+                          data: appUser.userId,
+                          // foregroundColor: AppTheme.primaryColor,
+                          version: QrVersions.auto,
+                        )
+                      : LoadingIndicator(),
                   SizedBox(
                     height: 10,
                   ),
@@ -135,12 +138,15 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                       SizedBox(
                         width: 7,
                       ),
-                      Text(
-                        appUser.userId,
-                        style: AppTheme.textFieldTitlePrimaryColored.copyWith(
-                          color: AppTheme.primaryColor,
-                        ),
-                      ),
+                      appUser != null
+                          ? Text(
+                              appUser.userId,
+                              style: AppTheme.textFieldTitlePrimaryColored
+                                  .copyWith(
+                                color: AppTheme.primaryColor,
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                   SizedBox(

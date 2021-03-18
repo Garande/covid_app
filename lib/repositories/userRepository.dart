@@ -49,4 +49,7 @@ class UserDataRepository {
 
   Future<List<AppUser>> searchUser(String query) =>
       userDataProvider.searchUser(query);
+
+  Future<List<AppUser>> fetchSystemUsers() =>
+      userDataProvider.fetchSystemUsers();
 }
