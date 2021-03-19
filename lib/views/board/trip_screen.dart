@@ -36,10 +36,10 @@ class _TripScreenState extends State<TripScreen> {
     return Scaffold(
         body: CardContainer(
             path: 'assets/images/agent-travel.png',
-            appBar: true,
+            appBar: false,
             children: <Widget>[
           SizedBox(
-            height: 34,
+            height: 54,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 26.0),

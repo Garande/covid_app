@@ -7,6 +7,7 @@ import 'package:covid_app/repositories/authenticationRepository.dart';
 import 'package:covid_app/repositories/storageRepository.dart';
 import 'package:covid_app/repositories/userRepository.dart';
 import 'package:covid_app/utils/Paths.dart';
+import 'package:covid_app/utils/helper.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -153,36 +154,41 @@ class AuthenticationBloc
   Stream<AuthenticationEvent> sendOtp(String phoneNumber, String countryCode,
       String userId, User googleUser) async* {
     StreamController<AuthenticationEvent> eventStream = StreamController();
-    final phoneVerificationCompleted = (AuthCredential authCredential) {
-      User user = authenticationRepository.getCurrentUser();
-      eventStream
-          .add(LoggedIn(user, googleUser, phoneNumber, countryCode, userId));
-      eventStream.close();
-    };
+    try {
+      final phoneVerificationCompleted = (AuthCredential authCredential) {
+        User user = authenticationRepository.getCurrentUser();
+        eventStream
+            .add(LoggedIn(user, googleUser, phoneNumber, countryCode, userId));
+        eventStream.close();
+      };
 
-    final phoneVerificationFailed = (FirebaseAuthException authException) {
-      print(authException.message);
-      eventStream.add(AuthExceptionEvent(authException.toString()));
-      eventStream.close();
-    };
+      final phoneVerificationFailed = (FirebaseAuthException authException) {
+        print(authException.message);
+        eventStream.add(AuthExceptionEvent(authException.toString()));
+        eventStream.close();
+      };
 
-    final phoneCodeSent = (String verId, [int forceResent]) {
-      this.verificationId = verId;
-      eventStream.add(OtpSendEvent());
-    };
+      final phoneCodeSent = (String verId, [int forceResent]) {
+        this.verificationId = verId;
+        eventStream.add(OtpSendEvent());
+      };
 
-    final phoneCodeAutoRetrievalTimeout = (String verId) {
-      this.verificationId = verId;
-      eventStream.close();
-    };
+      final phoneCodeAutoRetrievalTimeout = (String verId) {
+        this.verificationId = verId;
+        eventStream.close();
+      };
 
-    await authenticationRepository.sendOtp(
-        phoneNumber,
-        Duration(seconds: 1),
-        phoneVerificationFailed,
-        phoneVerificationCompleted,
-        phoneCodeSent,
-        phoneCodeAutoRetrievalTimeout);
+      await authenticationRepository.sendOtp(
+          phoneNumber,
+          Duration(seconds: 1),
+          phoneVerificationFailed,
+          phoneVerificationCompleted,
+          phoneCodeSent,
+          phoneCodeAutoRetrievalTimeout);
+    } catch (e) {
+      printLog('################################');
+      printLog(e);
+    }
 
     yield* eventStream.stream;
   }

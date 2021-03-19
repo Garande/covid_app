@@ -58,25 +58,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
-
-  var initializationSettingsAndroid = AndroidInitializationSettings('logo');
-  var initializationSettingsIOS = IOSInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      onDidReceiveLocalNotification:
-          (int id, String title, String body, String payload) async {});
-
-  var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
-
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
-    if (payload != null) {
-      // debugPrint('notification paylod: ' + payload);
-    }
-  });
 
   Bloc.observer = SimpleBlocObserver();
 
@@ -114,6 +97,25 @@ void main() async {
       ),
     ),
   );
+
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings('ic_launcher');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {});
+
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      // debugPrint('notification paylod: ' + payload);
+    }
+  });
 
   var channel =
       const MethodChannel('tech.garande.covid_app/background_service');

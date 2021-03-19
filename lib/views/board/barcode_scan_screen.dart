@@ -33,7 +33,7 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
   AppUser appUser;
 
   AuthenticationBloc _authenticationBloc;
-  TextEditingController codeController;
+  TextEditingController codeController = TextEditingController();
   MovementsBloc _movementsBloc;
 
   Location location = Location();
@@ -87,6 +87,7 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
           new DateTime.now().millisecondsSinceEpoch);
 
       _movementsBloc.startTrip(trip);
+      Navigator.pop(context);
     }
   }
 
@@ -182,6 +183,7 @@ class _BarcodeScanScreenState extends State<BarcodeScanScreen>
                         builder: (context) => CodeScreenModal(
                           codeEditController: codeController,
                           onPair: () {
+                            Navigator.pop(context);
                             startTrip(codeController.text);
                           },
                         ),
@@ -256,7 +258,7 @@ class CodeScreenModal extends StatelessWidget {
                     ),
                     controller: codeEditController,
                     style: AppTheme.textFieldTitlePrimaryColored,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                   ),
                 ],
               ),

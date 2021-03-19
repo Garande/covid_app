@@ -192,14 +192,14 @@ class SignInScreenState extends State<SignInScreen>
                 ),
               );
 
-            // _tabController.animateTo(_tabController.index + 1);
+            _tabController.animateTo(_tabController.index + 1);
           }
 
           if (state is PreFillData) {
             AppUser user = state.user;
-            // populateFields(user);
-            completeUserProfile();
-            // _tabController.animateTo(2);
+            populateFields(user);
+            // completeUserProfile();
+            _tabController.animateTo(2);
           }
 
           if (state is ProfileComplete) {
@@ -573,6 +573,8 @@ class SignInScreenState extends State<SignInScreen>
   TextEditingController dobController = TextEditingController();
   TextEditingController genderController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController ninController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
   AppUser currentUser;
   Future<void> populateFields(AppUser user) async {
@@ -585,6 +587,8 @@ class SignInScreenState extends State<SignInScreen>
         genderController.text = user.gender;
         phoneController.text = user.phoneNumber;
         currentUser = user;
+        ninController.text = user.nationalIdNo;
+        addressController.text = user.address;
       });
     } else {
       AppUser userObject = await _authenticationBloc.getCurrentUser();
@@ -596,6 +600,8 @@ class SignInScreenState extends State<SignInScreen>
         genderController.text = userObject.gender;
         phoneController.text = userObject.phoneNumber;
         currentUser = userObject;
+        ninController.text = userObject.nationalIdNo;
+        addressController.text = userObject.address;
       });
     }
   }
@@ -625,10 +631,12 @@ class SignInScreenState extends State<SignInScreen>
     );
   }
 
-  void completeUserProfile() {
+  void completeUserProfile({String gender}) {
     currentUser.name = nameController.text;
     currentUser.dob = dobController.text;
-    currentUser.gender = genderController.text;
+    currentUser.gender = gender;
+    currentUser.nationalIdNo = ninController.text;
+    currentUser.address = addressController.text;
 
     BlocProvider.of<AuthenticationBloc>(context)
         .add(SaveUserProfile(null, currentUser));

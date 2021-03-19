@@ -45,9 +45,9 @@ class Helper {
       'covidContactTracker',
       'covidContactTracker',
       'CovidTrackerChannel',
-      icon: 'ic_laucher',
+      icon: 'ic_launcher',
       // sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
-      largeIcon: DrawableResourceAndroidBitmap('ic_laucher'),
+      largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
       playSound: true, enableVibration: true,
     );
 

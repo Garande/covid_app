@@ -13,7 +13,7 @@ class Address {
     this.creationDateTimeMillis,
   });
 
-  factory Address.fromJson(Map<String, dynamic> data) {
+  factory Address.fromJson(var data) {
     if (data == null) return null;
 
     return Address(
