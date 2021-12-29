@@ -1,16 +1,12 @@
-# covid_app
+# Covid Contact Tracker
+This project is aimed at aiding in the Tracking of Covid 19 patients, i.e. It helps in tracking their movements, the people the came into contact with, the Mean of Transport used and the people who were part of the Transport, send anonymous alerts to people around a Geo-fence radius incase of any patient in the zone, etc.
 
-A new Flutter project.
+## Features
+- Scan to Ride feature
+- Geo-fencing
+- Quiz format self checkup
+- Covid-19 statistics / Updates
+- Travel history
+- Anonymous In-App alerts and Push Notifications
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
